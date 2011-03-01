@@ -1,4 +1,3 @@
-
 = AIM =
 
 The aim of this project is to learn about the android application development, while implementing the services provided by nextbus application as android application. 
