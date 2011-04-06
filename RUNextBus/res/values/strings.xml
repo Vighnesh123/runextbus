@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello"><b><i>RU Bus Prediction</i></b></string>
+    <string name="app_name">RU Bus Finder</string>
+    
+
+<string name="second">Get Schedule</string>
+
+    <string name="BusRoute">Choose a Route</string>
+    <string-array name="list">
+        <item>A</item>
+        <item>L</item>
+        <item>LXc</item>
+        <item>B</item>
+        <item>H</item>
+        <item>EE</item>
+        <item>F</item>
+    </string-array>
+    
+    
+ <string-array name="planets_array">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>    
+    
+<string name="schedule">This is the static schedule</string>
+<string name="neareststop">Get Nearest Stop</string>
+<string name="display1"> </string>
+<string name="prediction">Get Prediction</string>
+<string name="Display_time">Display Time</string>
+<string name="prediction_bus">Prediction of the bus</string>
+<string name="pred"> </string>
+</resources>

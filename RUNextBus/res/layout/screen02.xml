@@ -1,0 +1,65 @@
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical">
+
+
+
+<LinearLayout android:id="@+id/LinearLayout03" android:gravity="left" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent">
+
+<ImageView android:id="@+id/ImageView01" android:gravity="left" android:layout_width="70px" android:layout_height="70px" android:background="@drawable/rrr" android:layout_marginTop="5dip">
+</ImageView>
+<TextView
+android:id="@+id/widget47"
+android:layout_width="wrap_content"
+android:layout_height="70px"
+android:background="#000000"
+android:text=" 		FAVORITES"
+android:textSize="20sp"
+android:typeface="serif"
+android:textStyle="bold"
+android:textColor="#FF3333"
+android:gravity="center"
+>
+</TextView>
+</LinearLayout>
+
+  <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.1"
+        >   
+
+        <ListView android:id="@+id/android:list"
+        android:layout_width="fill_parent" 
+        android:layout_height="300dp" 
+        android:dividerHeight="2px">
+                 </ListView>
+                    
+
+
+
+    </LinearLayout> 
+
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="45px" 
+    android:gravity="center"
+    > 
+
+
+                <Button                      
+                     android:id="@+id/ManageButton"
+                     android:layout_width="wrap_content"
+                     android:layout_height="fill_parent"
+                     android:layout_alignParentRight="true"
+                     android:paddingRight="20px"
+                     android:gravity="center"
+                     android:text="MANAGE FAVORITES"
+                     />
+
+</LinearLayout>
+</LinearLayout>

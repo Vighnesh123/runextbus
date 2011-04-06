@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout android:id="@+id/LinearLayout01" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android" android:background="#000000" android:padding="30dip" android:orientation="horizontal">
+<LinearLayout android:layout_height="wrap_content" android:layout_gravity="center" android:layout_width="fill_parent" android:orientation="vertical" android:id="@+id/LinearLayout02"><TextView android:id="@+id/TextView01" android:textColor="#FF3333" android:typeface="sans" android:layout_height="50px" android:textSize="25sp" android:layout_width="800px" android:background="#000000" android:textStyle="bold" android:text="      RU NEXT BUS"></TextView>
+<Button android:gravity="center" 
+		android:layout_height="wrap_content" 
+		android:text="FAVORITES" 
+		android:layout_width="250dip" 
+		android:textStyle="bold" 
+		android:id="@+id/ButtonFavorite"></Button>
+<TextView android:id="@+id/TextView02" 
+		  android:textColor="#FF3333" 
+		  android:layout_height="wrap_content" 
+		  android:textSize="15sp" 
+		  android:layout_gravity="center" 
+		  android:layout_width="wrap_content" 
+		  android:textStyle="bold" 
+		  android:layout_marginBottom="5dip" 
+		  android:text="CLOSEST STOP"></TextView>
+<Spinner android:layout_height="wrap_content" 
+		 android:layout_width="250dip" 
+		 android:id="@+id/SpinnerRoute"></Spinner>
+<TextView android:id="@+id/TextView02" 
+		  android:textColor="#FF3333" 
+		  android:layout_height="wrap_content" 
+		  android:textSize="15sp" 
+		  android:layout_gravity="center" 
+		  android:layout_width="wrap_content" 
+		  android:textStyle="bold" 
+		  android:layout_marginBottom="5dip" 
+		  android:text="SELECT DESTINATION"></TextView>
+<Spinner android:layout_height="wrap_content" 
+		 android:layout_width="250dip" 
+		 android:id="@+id/SpinnerStop"></Spinner>
+<Button android:layout_marginTop="20dip" 
+		android:layout_height="wrap_content" 
+		android:text="Submit" 
+		android:layout_width="250dip" 
+		android:textStyle="bold" 
+		android:id="@+id/ButtonSubmit" 
+		android:textSize="16sp"></Button>
+
+<CheckBox android:id="@+id/ButtonCheck" android:layout_height="wrap_content" android:textColor="#FF3333" android:text="Mark Route as Favorite" android:layout_width="wrap_content" android:textStyle="bold"></CheckBox> 
+
+</LinearLayout>
+</LinearLayout>
