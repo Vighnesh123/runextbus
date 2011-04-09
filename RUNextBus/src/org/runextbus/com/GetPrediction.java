@@ -2,7 +2,6 @@ package org.runextbus.com;
 
 
 import java.io.IOException; 
-import org.runextbus.com.FavList;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -67,7 +66,6 @@ public class GetPrediction extends Activity implements OnClickListener  {
     private DataHelper dbobj;
     
     public List<String> someList = new ArrayList<String>();
-    public List<FavList> markFav = new ArrayList<FavList>();
     //spinners 
     
     static Spinner spinner1 = null;
