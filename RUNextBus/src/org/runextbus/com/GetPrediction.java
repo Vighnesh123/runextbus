@@ -43,14 +43,6 @@ import org.runextbus.com.ServerInterface;
 
 public class GetPrediction extends Activity implements OnClickListener  {
 	
-	
-	protected CharSequence[] _options = { "A Scott Hall", "B Busch Campus Center","EE Rutgers Student Center" };
-	protected boolean[] _selections =  new boolean[ _options.length ];
-	
-	protected Button _optionsButton;
-	
-	
-	
 	public int flag;
 	//some variables
 	Global gobj = new Global();
@@ -216,7 +208,7 @@ void startUp(){
     		   		
     		   		
     		   		int i=0;
-    		   		// if we use the iteratot logic to traverse
+    
     		   		//while((itrTag.hasNext())&&(itrTitle.hasNext())){
 	  
     		   		while(itrTag.hasNext()){
@@ -302,15 +294,6 @@ public void onClick(View p) {
 			
 		Intent i=new Intent(this,listingFav.class);
 		startActivity(i);
-		
-		//favPrediction();  
-		/*call list view 
-		Intent i=new Intent(this,listingFav.class);
-		startActivity(i);*/
-		/*List<String> list = new ArrayList<String>();
-	    list=dbobj.getFavs();
-		System.out.println(list);
-		showDialog(0);*/	
 	 	break;
 	 	
 	     
@@ -329,25 +312,22 @@ public void onClick(View p) {
 		 * 02. Over Write Favorite route and stop in Global file with Route and Stop 
 		 * 
 		 */
-	// uncheck check box here 
-		//ButtonCheck.setChecked(false);
+	
 
 		 if (((CheckBox) p).isChecked()) {
-			 //((CheckBox) p).setChecked(true);
-	          
+			  
 			 Toast.makeText(GetPrediction.this, "Marking as Favorite", Toast.LENGTH_SHORT).show();
 	            System.out.println("MARKING AS FAVORITE \n");
 	            dbobj.addFav(Global.route,Global.stop);
-	            updateFavData();
-	    	//((CheckBox) p).setChecked(false);
+	    	((CheckBox) p).setChecked(false);
 		 
 		 }
 		 
 		 else {
 				((CheckBox) p).setChecked(false);
-				 //dbobj.deleteFav(Global.route,Global.stop);
-				
-				//Toast.makeText(GetPrediction.this, "Favorite cannot be undone", Toast.LENGTH_SHORT).show();
+				System.out.println("REMOVING SELECTION AS FAVORITE \n");
+				 dbobj.deleteFav(Global.route,Global.stop);
+				Toast.makeText(GetPrediction.this, "Uncheck", Toast.LENGTH_SHORT).show();
 	        }
 		
 		break;
@@ -360,68 +340,7 @@ public void onClick(View p) {
  */
 
 
-@Override
-protected Dialog onCreateDialog( int id ) 
-{
-	return 
-	new AlertDialog.Builder( this )
-    	.setTitle( "Favorites" )
-    	//read the selected into options array and selections array
-    	.setMultiChoiceItems( _options, _selections, new DialogSelectionClickHandler() )
-    	
-    	.setPositiveButton( "OK", new DialogButtonClickHandler() )
-    	.create();
-}
 
-
-public class DialogSelectionClickHandler implements DialogInterface.OnMultiChoiceClickListener
-{
-	public void onClick( DialogInterface dialog, int clicked, boolean selected )
-	{
-		//Log.i( "FAVORITES LIST SELECTION", _options[ clicked ] + " selected: " + selected );
-	}
-}
-
-
-//if submit id pressed then handle it
-public class DialogButtonClickHandler implements DialogInterface.OnClickListener
-{
-	public void onClick( DialogInterface dialog, int clicked )
-	{
-		switch( clicked )
-		{
-			case DialogInterface.BUTTON_POSITIVE:
-				//do some thing with the selected data
-				printSelectedPlanets();
-				break;
-		}
-	}
-}
-
-protected void printSelectedPlanets(){
-	for( int i = 0; i < _options.length; i++ ){
-		Log.i( "SELECTED LIST", _options[ i ] + " selected: " + _selections[i] );
-	}
-}
-
-void updateFavData() {
-	
-	// disable the green thing on check box  
-	
-	//Set global flag 
-	
-	Global.fav=1;
-	
-	// find put if database is null or full :P 
-	
-	// delete previous data in database 
-	this.dbobj.deleteAll_fav();
-
-	//insert the new values into database 
-	dbobj.insertFavData(1, Global.routeTag, Global.route, Global.stopTag, Global.stop);
-	
-	
-}
 
 
 /*
