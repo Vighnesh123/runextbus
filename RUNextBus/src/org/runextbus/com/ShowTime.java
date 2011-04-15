@@ -2,6 +2,7 @@ package org.runextbus.com;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,9 +10,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import org.runextbus.com.Global;
+import org.runextbus.com.GetPrediction;
 
 public class ShowTime extends Activity implements OnClickListener  {
 
@@ -22,8 +27,8 @@ public class ShowTime extends Activity implements OnClickListener  {
 	    ServerInterface sobj = new ServerInterface();
 	    XmlParser xobj= new XmlParser();
 	    String timeXml=null;
-	    
-	   
+	    private DataHelper dbobj;	    
+	  
 /**
  * onCreate	  
  */
@@ -33,9 +38,9 @@ public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
     setContentView(R.layout.showtime);
     displayTime(Global.time);    
-  
+   
 }
-  
+ 
 /**
  * @description displayTime
  * @param time
@@ -89,10 +94,10 @@ void displayTime(ArrayList <String> time){
 	ButtonUpdate=(Button)findViewById(R.id.ButtonUpdate);
 	ButtonUpdate.setOnClickListener(this);
 	
-	//wait for options to be clicked
 	
+	 final CheckBox ButtonCheck=(CheckBox)findViewById(R.id.ButtonCheck);
+	   	ButtonCheck.setOnClickListener(this);
 	
-	 
 
 } // end of displayTime
 
@@ -103,7 +108,7 @@ void displayTime(ArrayList <String> time){
 
 public void onClick(View v) {
 		// TODO Auto-generated method stub
-
+	this.dbobj=new DataHelper(this);
 	switch(v.getId())
 		
 		{
@@ -113,10 +118,31 @@ public void onClick(View v) {
 	//change the Global.route and Global.stop values
 		
 			updateTime(Global.routeTag, Global.stopTag);
-			break;
-					
+			break;			
+		
+		case R.id.ButtonCheck:
+	
+
+	 if (((CheckBox) v).isChecked()) {      
+            System.out.println("MARKING AS FAVORITE \n");
+            dbobj.addFav(Global.route,Global.stop);
+            
+    	((CheckBox) v).setChecked(false);
+    	Global.test=1;
+	 
+	 }
+	 
+	 else {
+			((CheckBox) v).setChecked(false);
+			 //dbobj.deleteFav(Global.route,Global.stop);
 			
-		}	
+			//Toast.makeText(GetPrediction.this, "Favorite cannot be undone", Toast.LENGTH_SHORT).show();
+        }
+	
+	break;
+	
+} // end of switch case 
+
 	       	
 }// end of onClick
 
