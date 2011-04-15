@@ -1,19 +1,19 @@
 package org.runextbus.com;
 
 
-import java.io.IOException; 
+ 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
+import android.app.ListActivity;
+
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -41,7 +41,17 @@ import org.runextbus.com.ServerInterface;
  *
  */
 
-public class GetPrediction extends Activity implements OnClickListener  {
+public class GetPrediction extends ListActivity implements OnClickListener  {
+
+	
+	private List<String> lv_arr=new ArrayList<String>();
+	  public List<String> routeFavList = new ArrayList<String>();
+	  public List<String> stopFavList = new ArrayList<String>();
+	  ArrayAdapter<String> adapter;
+	public CharSequence[] _options;
+	public boolean[] _selections ;
+	
+	
 	
 	public int flag;
 	//some variables
@@ -56,66 +66,96 @@ public class GetPrediction extends Activity implements OnClickListener  {
     String timeXml=null;
     ShowTime stobj= new ShowTime();
     private DataHelper dbobj;
-    
+    public List<String> stopList = new ArrayList<String>();
     public List<String> someList = new ArrayList<String>();
     //spinners 
     
     static Spinner spinner1 = null;
 	static Spinner spinner2 = null;
 	
-	public List<String> stopList = new ArrayList<String>();
 	
-	
- public void onCreate(Bundle savedInstanceState) {
-	 
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.getprediction);
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		
+	super.onCreate(savedInstanceState);
+    setContentView(R.layout.newmain);
     
    // deleteDb();
     
     //startUp();
-    
-        //SPINNER LOGIC BEGINS HERE ..	
-    
-    spinner1 = (Spinner)this.findViewById(R.id.SpinnerRoute);
-    spinner2 = (Spinner)this.findViewById(R.id.SpinnerStop);
-    
-    
-	this.dbobj=new DataHelper(this);
+    setListAdapterMy();
+   spinner1 = (Spinner)this.findViewById(R.id.SpinnerRoute);
+   spinner2 = (Spinner)this.findViewById(R.id.SpinnerStop);
+   
+   
+   this.dbobj=new DataHelper(this);
 	/* First spinner value populated */
 	
 	List<String> routeList = new ArrayList<String>();
-    routeList= dbobj.populateRouteSpinner(); 
-    
-    //System.out.println("ROUTELIST : " + routeList);
-    //System.out.println("THIS : " + this);
-    
-    final ArrayAdapter<String> spinnerArrayAdapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, routeList);
+   routeList= dbobj.populateRouteSpinner(); 
+   
+   //System.out.println("ROUTELIST : " + routeList);
+   //System.out.println("THIS : " + this);
+   
+   final ArrayAdapter<String> spinnerArrayAdapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, routeList);
 	
-    spinnerArrayAdapter1.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+   spinnerArrayAdapter1.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
 	 spinner1.setAdapter(spinnerArrayAdapter1);
 	
 	 //on selection  
 	 spinner1.setOnItemSelectedListener(new MyOnItemSelectedListener());
 	
 	    
-	    ButtonSubmit=(Button)findViewById(R.id.ButtonSubmit);
-    	ButtonSubmit.setOnClickListener(this);
-    	
-    	final CheckBox ButtonCheck=(CheckBox)findViewById(R.id.ButtonCheck);
-    		
-    		 	 ButtonCheck.setOnClickListener(this); 
-    		 
-    		 
- 		
-    	ButtonFavorite=(Button)findViewById(R.id.ButtonFavorite);
-    	ButtonFavorite.setOnClickListener(this);
-
-    	
- } // end of oncreate
- 
- 
-
+	ButtonSubmit=(Button)findViewById(R.id.ButtonSubmit);
+   	ButtonSubmit.setOnClickListener(this);
+   	
+   	/*final CheckBox ButtonCheck=(CheckBox)findViewById(R.id.ButtonCheck);
+   	ButtonCheck.setOnClickListener(this);*/ 
+   		 
+   	ButtonFavorite=(Button)findViewById(R.id.ButtonFavorite);
+   	ButtonFavorite.setOnClickListener(this);
+   
+   
+ }
+	 
+      
+public void setListAdapterMy(){
+	
+	 this.dbobj=new DataHelper(this);
+	    routeFavList=dbobj.getFavRoute();	    
+	    stopFavList=dbobj.getFavStop();
+	     
+	   if(routeFavList.size()==0){
+	    	
+	    	lv_arr.add("No current Favorites");
+	    	//_options = lv_arr.toArray(new CharSequence[lv_arr.size()]);
+			 //initialize other GUI elements
+	    }//end of if
+	    
+	  
+	    else{
+	    	 System.out.println("SIZE IS "+routeFavList.size());
+	    if(routeFavList.size()>1){
+		for (int i=0;i<2;i++){
+		lv_arr.add(routeFavList.get(i)+" "+ stopFavList.get(i));
+		System.out.println("DB returned\n"+lv_arr);
+			} 
+	    	}
+	    
+	    else{
+	    		int i=0;
+	    		lv_arr.add(routeFavList.get(i)+" "+ stopFavList.get(i));
+	    		System.out.println("DB returned\n"+lv_arr);
+	    	}
+		
+	    } // end of else
+	  
+	   adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr);
+	//   adapter.notifyDataSetChanged(); 
+	   setListAdapter(adapter);	
+	
+}
  
  /**
   * on selection of spinner 1 update spinner 2 
@@ -208,7 +248,7 @@ void startUp(){
     		   		
     		   		
     		   		int i=0;
-    
+    		   		// if we use the iteratot logic to traverse
     		   		//while((itrTag.hasNext())&&(itrTitle.hasNext())){
 	  
     		   		while(itrTag.hasNext()){
@@ -294,6 +334,15 @@ public void onClick(View p) {
 			
 		Intent i=new Intent(this,listingFav.class);
 		startActivity(i);
+		
+		//favPrediction();  
+		/*call list view 
+		Intent i=new Intent(this,listingFav.class);
+		startActivity(i);*/
+		/*List<String> list = new ArrayList<String>();
+	    list=dbobj.getFavs();
+		System.out.println(list);
+		showDialog(0);*/	
 	 	break;
 	 	
 	     
@@ -312,22 +361,25 @@ public void onClick(View p) {
 		 * 02. Over Write Favorite route and stop in Global file with Route and Stop 
 		 * 
 		 */
-	
+	// uncheck check box here 
+		//ButtonCheck.setChecked(false);
 
 		 if (((CheckBox) p).isChecked()) {
-			  
+			 //((CheckBox) p).setChecked(true);
+	          
 			 Toast.makeText(GetPrediction.this, "Marking as Favorite", Toast.LENGTH_SHORT).show();
 	            System.out.println("MARKING AS FAVORITE \n");
 	            dbobj.addFav(Global.route,Global.stop);
-	    	((CheckBox) p).setChecked(false);
+	            updateFavData();
+	    	//((CheckBox) p).setChecked(false);
 		 
 		 }
 		 
 		 else {
 				((CheckBox) p).setChecked(false);
-				System.out.println("REMOVING SELECTION AS FAVORITE \n");
-				 dbobj.deleteFav(Global.route,Global.stop);
-				Toast.makeText(GetPrediction.this, "Uncheck", Toast.LENGTH_SHORT).show();
+				 //dbobj.deleteFav(Global.route,Global.stop);
+				
+				//Toast.makeText(GetPrediction.this, "Favorite cannot be undone", Toast.LENGTH_SHORT).show();
 	        }
 		
 		break;
@@ -341,6 +393,24 @@ public void onClick(View p) {
 
 
 
+void updateFavData() {
+	
+	// disable the green thing on check box  
+	
+	//Set global flag 
+	
+	Global.fav=1;
+	
+	// find put if database is null or full :P 
+	
+	// delete previous data in database 
+	this.dbobj.deleteAll_fav();
+
+	//insert the new values into database 
+	dbobj.insertFavData(1, Global.routeTag, Global.route, Global.stopTag, Global.stop);
+	
+	
+}
 
 
 /*
@@ -411,6 +481,22 @@ void favPrediction(){
 	startActivity(i);
 	
 	// fobj.getFavTime(favrTag, favrTitle, favsTag, favsTitle);	 
+}
+
+
+@Override
+protected void onStart() {
+    super.onStart();
+    /*
+     * when the activity is resumed, we acquire a wake-lock so that the
+     * screen stays on, since the user will likely not be fiddling with the
+     * screen or buttons.
+     */
+   lv_arr.clear();
+    setListAdapterMy();
+
+    // Start the simulation
+    
 }
 
 }//end of Class GetPrediction      
