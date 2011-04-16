@@ -1,0 +1,130 @@
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical">
+
+
+<LinearLayout android:id="@+id/LinearLayout03" android:gravity="left" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent">
+
+<ImageView android:id="@+id/ImageView01" android:paddingLeft="10px" android:gravity="left" android:layout_width="50px" android:layout_height="50px" android:background="@drawable/rrr" android:layout_marginTop="10dip">
+</ImageView>
+<TextView
+android:id="@+id/widget47"
+android:layout_marginTop="10dip"
+android:layout_width="wrap_content"
+android:layout_height="30px"
+android:background="#000000"
+android:paddingLeft="10px"
+android:text="FAVORITE PREDICTION"
+android:textSize="20sp"
+android:typeface="serif"
+android:textStyle="bold"
+android:textColor="#FF3333"
+android:gravity="center"
+>
+</TextView>
+</LinearLayout>
+
+  <LinearLayout
+  		android:background="#333333"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="180px"
+        android:layout_weight="0.1"
+        >   
+
+        <ListView android:id="@+id/android:list"
+        android:layout_width="fill_parent" 
+        android:layout_height="180px" 
+        android:dividerHeight="2px">
+                 </ListView>
+                   
+    </LinearLayout> 
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="240px" 
+    android:gravity="center"
+    > 
+
+
+                <Button                      
+                     android:id="@+id/ButtonFavorite"
+                     android:layout_width="280dp"
+                     android:layout_height="wrap_content"
+                     android:layout_alignParentRight="true"
+                     android:paddingRight="20px"
+                     android:gravity="center"
+                     android:text="MORE FAVORITES"
+                     android:textStyle="bold"
+                     android:textSize="18sp"
+                     />
+                     
+                     
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" 
+    android:gravity="center"
+    >
+    
+   <TextView android:id="@+id/TextView02" 
+		  android:layout_height="wrap_content" 
+		  android:layout_width="150px"
+		  android:paddingLeft="40px"
+		  android:textColor="#FF3333"
+		  android:textSize="15sp"
+		  android:textStyle="bold" 
+		  android:text="ROUTE"></TextView>
+	
+    
+    <TextView android:id="@+id/TextView02" 
+		  android:layout_height="wrap_content" 
+		  android:layout_width="140px"
+		  android:paddingLeft="20px"
+		  android:textColor="#FF3333"
+		  android:textSize="15sp"
+		  android:textStyle="bold" 
+		  android:text="STOP"></TextView>
+	
+	
+	</LinearLayout>
+	
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" 
+    android:gravity="center"
+    >
+   
+<Spinner
+		android:paddingLeft="20px" 
+		android:paddingRight="40px"
+		android:layout_height="wrap_content" 
+		android:layout_width="100px"
+		android:gravity="left"   
+		android:textSize="12pt"
+		android:id="@+id/SpinnerRoute"></Spinner>
+
+<Spinner
+		android:paddingLeft="40px" 
+		android:paddingRight="60px"
+		android:layout_height="wrap_content" 
+		 android:layout_width="180px"
+		 android:gravity="right"
+		 android:textSize="5pt" 
+		 android:id="@+id/SpinnerStop"></Spinner>
+</LinearLayout>		 
+
+		<Button android:layout_marginTop="20dp" 
+		android:layout_height="wrap_content" 
+		android:text="Submit" 
+		android:layout_width="280dip" 
+		android:textStyle="bold" 
+		android:id="@+id/ButtonSubmit" 
+		android:textSize="16sp"></Button>
+
+</LinearLayout>
+</LinearLayout>
