@@ -32,10 +32,10 @@ public class listingFav extends ListActivity implements OnClickListener
 	  Button ManageButton;
 	public  ArrayAdapter<String> adapter;
 	private DataHelper dbobj;
-	public CharSequence[] _options;
+	public CharSequence[] _options; 
 	public boolean[] _selections ;
- public GetPrediction gpObj;	
-	
+	public GetPrediction gpObj;	
+	public int manage=0;
     @Override  
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -44,7 +44,8 @@ public class listingFav extends ListActivity implements OnClickListener
         super.onCreate(savedInstanceState);  
         setContentView(R.layout.screen02);
         listCreation();  
-    	ManageButton=(Button)findViewById(R.id.ManageButton);
+    	
+        ManageButton=(Button)findViewById(R.id.ManageButton);
     	ManageButton.setOnClickListener((OnClickListener) this);
 
     }
@@ -56,16 +57,16 @@ public class listingFav extends ListActivity implements OnClickListener
 	    if(routeList.size()==0){
 	    	
 	    	lv_arr.add("No current Favorites");
-	    	_options = lv_arr.toArray(new CharSequence[lv_arr.size()]);
-			_selections= new boolean[ _options.length];
-			 adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr);
+	    //	_options = lv_arr.toArray(new CharSequence[lv_arr.size()]);
+		//	_selections= new boolean[ _options.length];
+	    
+			adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr);
 			 setListAdapter(adapter);	    
 	    }
 	    
 	    
 	    else{
 	    System.out.println("DB returned\n");
-		
 		for (int i=0;i<routeList.size();i++){
 		lv_arr.add(routeList.get(i)+" "+ stopList.get(i));
 		}
@@ -79,11 +80,9 @@ public class listingFav extends ListActivity implements OnClickListener
     }    // end of listCreation
     
  
-    public void onListItemClick(
-    ListView parent, View v,
-    int position, long id) 
+    public void onListItemClick(ListView parent, View v,int position, long id) 
     {   
-        Toast.makeText(this, "You have selected " + lv_arr.get(position),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "You have selected " + lv_arr.get(position),Toast.LENGTH_SHORT).show();
         int i=position+1;
         System.out.println("THE NUMBER SELECTED IS "+i);    
         favPrediction(i-1);
@@ -126,7 +125,8 @@ public class listingFav extends ListActivity implements OnClickListener
     	case R.id.ManageButton:	
     			
     		System.out.println(_options);
-    		showDialog(0);	
+    		System.out.println("Value of manage is : "+manage);
+    		showDialog(manage);	
     	 	break;
     	}
     } // end of onclick for manage favoirtes button
@@ -162,8 +162,7 @@ public class listingFav extends ListActivity implements OnClickListener
     		{
     			case DialogInterface.BUTTON_POSITIVE:
     				deleteSelected();
-    				adapter.notifyDataSetChanged();
-    				
+//    				adapter.notifyDataSetChanged();
     				break;
     		}
     	}
@@ -174,10 +173,13 @@ public class listingFav extends ListActivity implements OnClickListener
     		if(_selections[i]){
     		Log.i( "SELECTED LIST", _options[ i ] + " selected ");
     		dbobj.deleteFav(routeList.get(i),stopList.get(i));
-    		onStart();
-    		}
+	
     		
+    		}
     	}
+    	
+    	adapter.notifyDataSetChanged();  
+    	onStart();
     }// end of delete selected 
 
     void refresh(){
@@ -192,14 +194,11 @@ public class listingFav extends ListActivity implements OnClickListener
     @Override
     protected void onStart() {
         super.onStart();
-        /*
-         * when the activity is resumed, we acquire a wake-lock so that the
-         * screen stays on, since the user will likely not be fiddling with the
-         * screen or buttons.
-         */
+       
       routeList.clear();
-      stopList.clear();
+      stopList.clear( );
       lv_arr.clear();
+       manage=manage+1;
         listCreation();
         
     }
