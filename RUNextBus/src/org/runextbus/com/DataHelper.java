@@ -352,22 +352,22 @@ public List<String> getRouteForCloseStop(String closestStop) {
 public List<String> getFavorite(int option) {
     // TODO Auto-generated method stub
     
-	System.out.println("Inside the getFavorite function....\n");
-	List<String> favList = new ArrayList<String>();
+        System.out.println("Inside the getFavorite function....\n");
+        List<String> favList = new ArrayList<String>();
     //option has to be 1 or 2 
     
 // read the first favorite 
 if (option==1){
-	
+        
 Cursor cursor =db.rawQuery("SELECT * FROM Favorite WHERE favNum = ('" + option + "');", null);
 if (cursor.moveToFirst()) {
-	do {
+        do {
       favList.add(cursor.getString(1));
       favList.add(cursor.getString(2));
       favList.add(cursor.getString(3));
       favList.add(cursor.getString(4));
       
-	} while (cursor.moveToNext());
+        } while (cursor.moveToNext());
 
 }
 if (cursor != null && !cursor.isClosed()) {
@@ -379,24 +379,24 @@ System.out.println("Data : "+favList+"\n");
 
 //second favorite 
 else if(option==2){
-	
-	Cursor cursor =db.rawQuery("SELECT * FROM Favorite WHERE favNum = ('" + option + "');", null);
+        
+        Cursor cursor =db.rawQuery("SELECT * FROM Favorite WHERE favNum = ('" + option + "');", null);
 
-	if (cursor.moveToFirst()) {
-	do {
-		  favList.add(cursor.getString(1));
-	      favList.add(cursor.getString(2));
-	      favList.add(cursor.getString(3));
-	      favList.add(cursor.getString(4));
-	      
-	   } while (cursor.moveToNext());
-	}
-	
-	if (cursor != null && !cursor.isClosed()) {
-	   cursor.close();
-	} 
-	
-	System.out.println("Data :"+favList+"\n");
+        if (cursor.moveToFirst()) {
+        do {
+                  favList.add(cursor.getString(1));
+              favList.add(cursor.getString(2));
+              favList.add(cursor.getString(3));
+              favList.add(cursor.getString(4));
+              
+           } while (cursor.moveToNext());
+        }
+        
+        if (cursor != null && !cursor.isClosed()) {
+           cursor.close();
+        } 
+        
+        System.out.println("Data :"+favList+"\n");
 } // end of else if 
 
 return favList;
@@ -407,19 +407,19 @@ return favList;
 
 public void insertFavData(int i,String rTag, String rTitle, String sTag,String sTitle){
     
-	db.execSQL("UPDATE Favorite SET RouteTag = '"+ rTag +"',RouteTitle = '"+ rTitle +"',StopTag ='"+ sTag +"',StopTitle = '"+ sTitle +"' WHERE favNum ='"+i+"'");
+        db.execSQL("UPDATE Favorite SET RouteTag = '"+ rTag +"',RouteTitle = '"+ rTitle +"',StopTag ='"+ sTag +"',StopTitle = '"+ sTitle +"' WHERE favNum ='"+i+"'");
                                                 
                         
 }// end of insertAll
 
 
 public void deleteAll_fav() {
-	// TODO Auto-generated method stub
-	
-	  this.db.delete(TABLE_NAME_Fav, null, null);
-	
-	  insertFav(1);
-	  //insertFav(2);
+        // TODO Auto-generated method stub
+        
+          this.db.delete(TABLE_NAME_Fav, null, null);
+        
+          insertFav(1);
+          //insertFav(2);
 }//end of deleteAll_fav
 
 
@@ -436,34 +436,34 @@ public void insertFav(int i){
 //add the entry
 
 public void addFav(String rTitle,String sTitle){
-	int flag=1;
-	System.out.println(sTitle);
-	System.out.println(rTitle);
-	System.out.println("Adding Favorite with new function");
+        int flag=1;
+        System.out.println(sTitle);
+        System.out.println(rTitle);
+        System.out.println("Adding Favorite with new function");
 db.execSQL("UPDATE RUData SET FavStatus = '"+ flag +"' WHERE StopTitle= '"+ sTitle +"' and RouteTitle  ='"+ rTitle +"'");
-	                                                                      
-	}// end of updateFavStatus
+                                                                              
+        }// end of updateFavStatus
 
 
 //delete the entry 
 public void deleteFav(String rTitle,String sTitle){
-	int flag=0;
-	System.out.println("Deleting Favorite with new function");
+        int flag=0;
+        System.out.println("Deleting Favorite with new function");
 db.execSQL("UPDATE RUData SET FavStatus = '"+ flag +"' WHERE StopTitle= '"+sTitle+"' and RouteTitle  ='"+rTitle+"'");
-	                                                                        
-	}// end of updateFavStatus
+                                                                                
+        }// end of updateFavStatus
 
 
 
 public List<String> getFavRoute() {
     // TODO Auto-generated method stub
     
-	System.out.println("Inside the getFavorite function....\n");
+        System.out.println("Inside the getFavorite function....\n");
 List<String> list = new ArrayList<String>();
     Cursor cursor =db.rawQuery("SELECT RouteTitle from RUData Where FavStatus='"+1+"'", null);
 
 if (cursor.moveToFirst()) {
-	
+        
 do {
       list.add(cursor.getString(0));
 } while (cursor.moveToNext());
@@ -478,12 +478,12 @@ return list;
 public List<String> getFavStop() {
     // TODO Auto-generated method stub
     
-	System.out.println("Inside the getFavorite function....\n");
+        System.out.println("Inside the getFavorite function....\n");
 List<String> list = new ArrayList<String>();
     Cursor cursor =db.rawQuery("SELECT StopTitle from RUData Where FavStatus='"+1+"'", null);
 
 if (cursor.moveToFirst()) {
-	
+        
 do {
       list.add(cursor.getString(0));
 } while (cursor.moveToNext());
