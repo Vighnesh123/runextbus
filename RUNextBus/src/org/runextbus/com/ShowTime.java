@@ -128,7 +128,7 @@ public void onClick(View v) {
             dbobj.addFav(Global.route,Global.stop);
             
     	((CheckBox) v).setChecked(false);
-    	Global.test=1;
+    	Toast.makeText(ShowTime.this, "MARKED AS FAVORITE", Toast.LENGTH_SHORT).show();
 	 
 	 }
 	 
