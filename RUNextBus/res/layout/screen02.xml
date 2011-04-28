@@ -27,30 +27,33 @@ android:gravity="center"
   <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="440px"
         android:layout_weight="0.1"
         >   
 
         <ListView android:id="@+id/android:list"
         android:layout_width="fill_parent" 
-        android:layout_height="250px" 
-        android:dividerHeight="2px">
+        android:layout_height="440px" 
+        android:dividerHeight="2px"
+         android:textStyle="bold"
+        android:textSize="18sp">
                  </ListView>
                    
     </LinearLayout> 
 
 <LinearLayout
+	android:background="#000000"
     android:orientation="horizontal"
     android:layout_width="fill_parent"
-    android:layout_height="45px" 
+    android:layout_height="60px" 
     android:gravity="center"
     > 
 
 
                 <Button                      
                      android:id="@+id/ManageButton"
-                     android:layout_width="wrap_content"
-                     android:layout_height="fill_parent"
+                     android:layout_width="280px"
+                     android:layout_height="wrap_content"
                      android:layout_alignParentRight="true"
                      android:paddingRight="20px"
                      android:gravity="center"
