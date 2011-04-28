@@ -29,44 +29,49 @@ public class DataBaseHelper extends SQLiteOpenHelper{
      */
     public DataBaseHelper(Context context) {
  
-    	super(context, DB_NAME, null, 1);
+        super(context, DB_NAME, null, 1);
         this.myContext = context;
        
         //calling create database here 
         try {
-			createDataBase();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }	
+                        createDataBase();
+                } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+    }   
  
   /**
      * Creates a empty database on the system and rewrites it with your own database.
      * */
     public void createDataBase() throws IOException{
  
-    	boolean dbExist = checkDataBase();
-    	System.out.println("I am here ... but did not kill your app !! \n");
-    	if(dbExist){
-    		
-    		//do nothing - database already exist
-    	}else{
+        boolean dbExist = checkDataBase();
+        //boolean dbExist = false;
+        System.out.println("I am here ... but did not kill your app !! \n");
+
+        
+        if(dbExist){
+                
+                //do nothing - database already exist
+        }
+        
+        else{
  
-    		//By calling this method and empty database will be created into the default system path
+                //By calling this method and empty database will be created into the default system path
                //of your application so we are gonna be able to overwrite that database with our database.
-        	this.getReadableDatabase();
+                this.getReadableDatabase();
  
-        	try {
+                try {
  
-    			copyDataBase();
+                        copyDataBase();
  
-    		} catch (IOException e) {
+                } catch (IOException e) {
  
-        		throw new Error("Error copying database");
+                        throw new Error("Error copying database");
  
-        	}
-    	}
+                }
+        }
  
     }
  
@@ -76,25 +81,25 @@ public class DataBaseHelper extends SQLiteOpenHelper{
      */
     private boolean checkDataBase(){
  
-    	SQLiteDatabase checkDB = null;
+        SQLiteDatabase checkDB = null;
  
-    	try{
-    		String myPath = DB_PATH + DB_NAME;
-    		checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+        try{
+                String myPath = DB_PATH + DB_NAME;
+                checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
  
-    	}catch(SQLiteException e){
+        }catch(SQLiteException e){
  
-    		//database does't exist yet.
+                //database does't exist yet.
  
-    	}
+        }
  
-    	if(checkDB != null){
+        if(checkDB != null){
  
-    		checkDB.close();
+                checkDB.close();
  
-    	}
+        }
  
-    	return checkDB != null ? true : false;
+        return checkDB != null ? true : false;
     }
  
     /**
@@ -104,56 +109,56 @@ public class DataBaseHelper extends SQLiteOpenHelper{
      * */
     private void copyDataBase() throws IOException{
  
-    	//Open your local db as the input stream
-    	InputStream myInput = myContext.getAssets().open(DB_NAME);
+        //Open your local db as the input stream
+        InputStream myInput = myContext.getAssets().open(DB_NAME);
+ System.out.println("Getting file from aSsets folder");
+        // Path to the just created empty db
+        String outFileName = DB_PATH + DB_NAME;
  
-    	// Path to the just created empty db
-    	String outFileName = DB_PATH + DB_NAME;
+        //Open the empty db as the output stream
+        OutputStream myOutput = new FileOutputStream(outFileName);
  
-    	//Open the empty db as the output stream
-    	OutputStream myOutput = new FileOutputStream(outFileName);
+        //transfer bytes from the inputfile to the outputfile
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = myInput.read(buffer))>0){
+                myOutput.write(buffer, 0, length);
+        }
  
-    	//transfer bytes from the inputfile to the outputfile
-    	byte[] buffer = new byte[1024];
-    	int length;
-    	while ((length = myInput.read(buffer))>0){
-    		myOutput.write(buffer, 0, length);
-    	}
- 
-    	//Close the streams
-    	myOutput.flush();
-    	myOutput.close();
-    	myInput.close();
+        //Close the streams
+        myOutput.flush();
+        myOutput.close();
+        myInput.close();
  
     }
  
     public void openDataBase() throws SQLException{
  
-    	//Open the database
+        //Open the database
         String myPath = DB_PATH + DB_NAME;
-    	myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+        myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
  
     }
  
     @Override
-	public synchronized void close() {
+        public synchronized void close() {
  
-    	    if(myDataBase != null)
-    		    myDataBase.close();
+            if(myDataBase != null)
+                    myDataBase.close();
  
-    	    super.close();
+            super.close();
  
-	}
+        }
  
-	@Override
-	public void onCreate(SQLiteDatabase db) {
+        @Override
+        public void onCreate(SQLiteDatabase db) {
  
-	}
+        }
  
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
  
-	}
+        }
  
         // Add your public helper methods to access and get content from the database.
        // You could return cursors by doing "return myDataBase.query(....)" so it'd be easy
@@ -162,61 +167,61 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 
 
 public class OpenHelper extends SQLiteOpenHelper {
-			
-		 private final Context myContext;
-		 
-		 
-	 public OpenHelper(Context context) {
-		 	
-	     	super(context, DB_NAME, null, 1);
-	         this.myContext = context;
-	         start();
-	  
-			
-	 }
-	 
-	 
-	 
+                        
+                 private final Context myContext;
+                 
+                 
+         public OpenHelper(Context context) {
+                        
+                super(context, DB_NAME, null, 1);
+                 this.myContext = context;
+                 start();
+          
+                        
+         }
+         
+         
+         
 void start(){
-	
+        
     DataBaseHelper myDbHelper=new DataBaseHelper(this.myContext);
-	try {
-	             
-	         	myDbHelper.createDataBase();
-	  
-	  	} catch (IOException ioe) {
-	  
-	  		throw new Error("Unable to create database");
-	  
-	  	}
-	  
-	  	try {
-	  
-	  		myDbHelper.openDataBase();
-	  
-	  	}catch(SQLException sqle){
-	  
-	  		throw sqle;
-	  
-	  	}   
-	 
-	 }
+        try {
+                     
+                        myDbHelper.createDataBase();
+          
+                } catch (IOException ioe) {
+          
+                        throw new Error("Unable to create database");
+          
+                }
+          
+                try {
+          
+                        myDbHelper.openDataBase();
+          
+                }catch(SQLException sqle){
+          
+                        throw sqle;
+          
+                }   
+         
+         }
 
-	@Override
-	public void onCreate(SQLiteDatabase db) {
-		// TODO Auto-generated method stub
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+                // TODO Auto-generated method stub
 
-		
-		
-		
-	}
+                
+                
+                
+        }
 
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
-		
-	}	
-	   
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+                // TODO Auto-generated method stub
+                
+        }       
+           
 }
 
 }
