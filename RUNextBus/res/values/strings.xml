@@ -4,7 +4,7 @@
     <string name="app_name">RU Bus Finder</string>
     
 
-<string name="second">Get Schedule</string>
+<string name="second">" "</string>
 
     <string name="BusRoute">Choose a Route</string>
     <string-array name="list">
