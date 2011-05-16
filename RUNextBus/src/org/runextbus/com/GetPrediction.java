@@ -29,18 +29,14 @@ import android.widget.Toast;
 
 public class GetPrediction extends ListActivity implements OnClickListener  {
         
-        // Variables and objects used
-    public int flag;
-    Global gobj = new Global();
-    public static SQLiteDatabase db;
-    Button ButtonSubmit;
+    //public static SQLiteDatabase db;
+    
     Button ButtonFavorite;
     CheckBox ButtonCheck;
+    
     TextView txt;
     ServerInterface sobj = new ServerInterface();
     XmlParser xobj= new XmlParser();
-    String timeXml=null;
-    ShowTime stobj= new ShowTime();
     private DataHelper dbobj;
     
     
@@ -134,12 +130,14 @@ public class MyOnItemSelectedListener implements OnItemSelectedListener{
                            public void onItemSelected(AdapterView<?> arg0,View view, int pos, long id) {
                                    
                     String StopTitle = arg0.getItemAtPosition(pos).toString();
+                    
                     if(StopTitle!="PICK STOP"){
                     Global.route = (String)spinner1.getSelectedItem();
                        //Global.stop=(String)spinner2.getSelectedItem();
-                                Global.stop=StopTitle;
+                        Global.stop=StopTitle;
                         startPrediction(Global.route,Global.stop);
-                        }
+                    
+                    }
                         
                         else{
                                 
@@ -193,17 +191,18 @@ public void onListItemClick(ListView parent, View v,int position, long id)
    //get which array adapter
 	
    int i=position;
-   routeFavList.clear();
-   stopFavList.clear();
    
    routeFavList=dbobj.getFavRoute();       
    stopFavList=dbobj.getFavStop();
+   
    ArrayList<String> fTime =new ArrayList<String>();
    fTime.clear();
-    fTime = getTime(routeFavList.get(i),stopFavList.get(i)); 
+   
+   fTime = getTime(routeFavList.get(i),stopFavList.get(i)); 
         
         if(fTime.size()==0){
-                lv_arr.add(routeFavList.get(i)+" - "+ stopFavList.get(i)+" :\n No Prediction");
+        	lv_arr.remove(i);
+                lv_arr.add(i,routeFavList.get(i)+" - "+ stopFavList.get(i)+" :\n No Prediction");
                 adapter.notifyDataSetChanged();
  //               onStart();
         }
@@ -212,10 +211,12 @@ public void onListItemClick(ListView parent, View v,int position, long id)
                 
         System.out.println("I am changing the listview \n");
         if(fTime.size()>=2){
-        lv_arr.add(routeFavList.get(i)+" - "+ stopFavList.get(i)+" :\n"+fTime.get(0)+"min "+fTime.get(1)+"min");
+        	lv_arr.remove(i);
+        lv_arr.add(i,routeFavList.get(i)+" - "+ stopFavList.get(i)+" :\n"+fTime.get(0)+"min "+fTime.get(1)+"min");
         }
         else{
-        	lv_arr.add(routeFavList.get(i)+" - "+ stopFavList.get(i)+" :\n"+fTime.get(0)+"min ");
+        	lv_arr.remove(i);
+        	lv_arr.add(i,routeFavList.get(i)+" - "+ stopFavList.get(i)+" :\n"+fTime.get(0)+"min ");
         }
         
         //don't set them again !
@@ -223,7 +224,10 @@ public void onListItemClick(ListView parent, View v,int position, long id)
          
         //setListAdapter(adapter);
            
-        Toast.makeText(this, "You have selected " + lv_arr.get(position),Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, "You have selected " + lv_arr.get(position),Toast.LENGTH_SHORT).show();
+        routeFavList.clear();
+        stopFavList.clear();
+       // sleep();
         adapter.notifyDataSetChanged();
         //  onStart();
         
@@ -248,8 +252,8 @@ public void onClick(View p) {
          /*This is for populating second spinner*/
 
                  // Pass the route and stop selected  to startPrediction on click of submit 
-        Global.route = (String)spinner1.getSelectedItem();
-    Global.stop=(String)spinner2.getSelectedItem();
+    //    Global.route = (String)spinner1.getSelectedItem();
+    //Global.stop=(String)spinner2.getSelectedItem();
             
     switch(p.getId())
         
@@ -261,9 +265,9 @@ public void onClick(View p) {
                 break;
                  
         
-        case R.id.ButtonSubmit:
+     /*   case R.id.ButtonSubmit:
                 startPrediction(Global.route,Global.stop);
-                break;
+                break;*/
                 
 } // end of switch case 
 }// end of onClick
@@ -275,6 +279,7 @@ public void setListAdapterMy(){
          
             routeFavList=dbobj.getFavRoute();       
             stopFavList=dbobj.getFavStop();
+            
             ArrayList<String> favTime = new ArrayList<String>();
             
            if(routeFavList.size()==0){  
@@ -307,15 +312,43 @@ public void setListAdapterMy(){
                         
                 }
                         
-           
-                else if(stopFavList.size()>=2){
+
+                else if((routeFavList.size()==1)&&(stopFavList.size()==2)){
+                	System.out.println("Option selected is : same route different stops");
+                    
+                	for(int i=0;i<stopFavList.size();i++){
+                    favTime.clear();        
+                    favTime = getTime(routeFavList.get(0),stopFavList.get(i)); 
+                   
+                    if(favTime.size()==0){
+                      lv_arr.add(routeFavList.get(0)+" - "+ stopFavList.get(i)+" :\n No Prediction");
+                    }
+
+                    else{
+                    	if(favTime.size()>=2){
+                    lv_arr.add(routeFavList.get(0)+" - "+ stopFavList.get(i)+" :\n"+favTime.get(0)+"min "+favTime.get(1)+"min");
+                     }      
+                    	else{
+                    		
+                    		lv_arr.add(routeFavList.get(0)+" - "+ stopFavList.get(i)+" :\n"+favTime.get(0)+"min ");
+                    		}
+                                    
+                    	}
+                    //sleep();
+                 }// end of for loop
+            }
+
                 
+                
+                else if((routeFavList.size()>=2)&&(stopFavList.size()>=2)){
+                	System.out.println("Option selected is : Different route different stops");
             	for (int i=0;i<2;i++){
             		
                 favTime.clear();        
                 
-                favTime = getTime(routeFavList.get(i),stopFavList.get(i)); 
+                favTime = getTime(routeFavList.get(i),stopFavList.get(i));
                 
+                System.out.println("TIme is "+ favTime.get(0));
                 if(favTime.size()==0){
                        lv_arr.add(routeFavList.get(i)+" - "+ stopFavList.get(i)+" :\n No Prediction");
                 }
@@ -328,6 +361,7 @@ public void setListAdapterMy(){
                 		lv_arr.add(routeFavList.get(i)+" - "+ stopFavList.get(i)+" :\n"+favTime.get(0)+"min ");
                 	}  	
                }
+                
             }
                 
             }// end of routesize
@@ -343,9 +377,9 @@ public void setListAdapterMy(){
  * startPrediction
  */
 
-void startPrediction(String route, String stop){        
-Global.time=getTime(route,stop);    
-                
+void startPrediction(String r, String s){        
+	
+Global.time=getTime(r,s);                
     // get the route and stop tags to be passed to get prediction 
 System.out.println("Global time is : "+Global.time);
 
@@ -361,39 +395,52 @@ else{
         //display time 
 Intent i=new Intent(this,ShowTime.class);
 startActivity(i);
+//finish();
 }
-
 } // end of startPrediction
 
 /*
  * getTime : To get current prediction
- * 
  */
 
 public ArrayList<String> getTime(String route, String stop){
 
 ArrayList<String>time= new ArrayList<String>();
+List<String> listRTag = new ArrayList<String>();
+List<String> listSTag = new ArrayList<String>();
 
-List<String> listRouteTag = new ArrayList<String>();
-listRouteTag=dbobj.getRouteTag(route);
-Global.routeTag = listRouteTag.get(0);
 
- List<String> listStopTag = new ArrayList<String>();
- listStopTag=dbobj.getStopTag(route,stop);
- Global.stopTag = listStopTag.get(0);
+listRTag=dbobj.getRouteTag(route);
+//Global.routeTag = listRouteTag.get(0);
+listSTag=dbobj.getStopTag(route,stop);
+
+String rr=null; 
+rr=listRTag.get(0);
+String ss=null;
+ss=listSTag.get(0);
+//Global.stopTag = listStopTag.get(0);
  
-String timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+Global.routeTag+"&s="+Global.stopTag;
 
-String timeXml = sobj.retrieve(timeUrl);
+String timeUrl=null; 
+//String timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+Global.routeTag+"&s="+Global.stopTag;
+timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+rr+"&s="+ss;
+//System.out.println("Server Query :: "+timeUrl);
+ //System.out.println(" Stop Tag :"+Global.stopTag+" Route Tag :"+Global.routeTag);
+//System.out.println("Combination is :"+listRTag.get(0)+":"+listSTag.get(0));
 
-//log
-System.out.println(" xml is : "+timeXml);
+//System.out.println(" Called prediction");
+String timeXml =null; 
+timeXml=sobj.retrieve(timeUrl);
 
-time= xobj.parseTimeResponse(timeXml);
+
+//System.out.println(" xml is : "+timeXml);
 
 time.clear();
-listRouteTag.clear();
-listStopTag.clear();
+time= xobj.parseTimeResponse(timeXml);
+
+listRTag.clear();
+listSTag.clear();
+
 
 return time;
 }
@@ -408,7 +455,7 @@ void predictionError(){
         
         Intent i=new Intent(this,PredictionFailure.class);
         startActivity(i);
-        
+//        finish();
 }// end of predictionError
 
 
@@ -421,14 +468,28 @@ void predictionError(){
 @Override
 protected void onStart() {
     super.onStart();
-    /*
-     * when the activity is started perform the prediction of two favorites 
-     */
+    
+    // * when the activity is started perform the prediction of two favorites 
+     
     lv_arr.clear();
     setListAdapterMy();
 }
 
 
+
+void sleep(){
+	   long endTime = System.currentTimeMillis() + 12*1000; 
+	   while (System.currentTimeMillis() < endTime) {synchronized (this){ 
+	   	try { wait(endTime - System.currentTimeMillis());              
+	   	} catch (Exception e) {              
+	   		
+	   	}          
+	   	}      
+	   }
+	}
+
+
+}//end of class
 //******************************** UNUSED *********************************************//
 
 
@@ -524,7 +585,7 @@ else {
 
 
 
-}//end of Class GetPrediction      
+//}//end of Class GetPrediction      
 
      
 
