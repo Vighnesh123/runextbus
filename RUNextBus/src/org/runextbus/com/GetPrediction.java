@@ -1,13 +1,15 @@
 package org.runextbus.com;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -16,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import org.runextbus.com.XmlParser;
@@ -35,10 +38,10 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
     CheckBox ButtonCheck;
     
     TextView txt;
-    ServerInterface sobj = new ServerInterface();
+    ServerInterface sobj =  new ServerInterface();
     XmlParser xobj= new XmlParser();
     private DataHelper dbobj;
-    
+    private ShowFavtime sftob=new ShowFavtime();
     
     
     //variables used by spinners 
@@ -58,7 +61,11 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
     public CharSequence[] _options;
     public boolean[] _selections ;
 
-    
+    //progress bar :
+    private static int progress = 0;
+    private ProgressBar progressBar;
+    private int progressStatus = 0;    
+    private Handler handler = new Handler();
     
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -75,29 +82,80 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
     
     //for the first time call this to set the favorite predictions 
     
-        setListAdapterMy();
-    
-    
-    //spinners for route and stop selection 
-    spinner1 = (Spinner)this.findViewById(R.id.SpinnerRoute);
-    spinner2 = (Spinner)this.findViewById(R.id.SpinnerStop);
-   
-   
-    
-        /* First spinner value populated */
-   
-   routeList= dbobj.populateRouteSpinner(); 
+        
+        //spinners for route and stop selection 
+        spinner1 = (Spinner)this.findViewById(R.id.SpinnerRoute);
+        spinner2 = (Spinner)this.findViewById(R.id.SpinnerStop);
+       
+       
+        
+            /* First spinner value populated */
+       
+       routeList= dbobj.populateRouteSpinner(); 
+     
+     
+       spinnerArrayAdapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, routeList);
+       spinnerArrayAdapter1.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );  
+       spinner1.setAdapter(this.spinnerArrayAdapter1);
+       spinner1.setOnItemSelectedListener(new MyOnItemSelectedListener());
+                     
+            ButtonFavorite=(Button)findViewById(R.id.ButtonFavorite);
+            ButtonFavorite.setOnClickListener(this);
+            
+        
+        
+        progressBar = (ProgressBar) findViewById(R.id.progressbar);
+        
+        //---do some work in background thread---
+        new Thread(new Runnable() 
+        {
+   //     	  ProgressDialog pd = ProgressDialog.show(getBaseContext(),"","Fetching Favorites ...",false);
+            public void run() 
+            {
+                while (progressStatus < 100) 
+                {
+                    progressStatus = doSomeWork();
  
+                    //---Update the progress bar---
+                    handler.post(new Runnable() 
+                    {
+                        public void run() {
+                      
+                            progressBar.setProgress(progressStatus);
+                        }
+                    });
  
-   spinnerArrayAdapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, routeList);
-   spinnerArrayAdapter1.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );  
-   spinner1.setAdapter(this.spinnerArrayAdapter1);
-   spinner1.setOnItemSelectedListener(new MyOnItemSelectedListener());
-                 
-        ButtonFavorite=(Button)findViewById(R.id.ButtonFavorite);
-        ButtonFavorite.setOnClickListener(this);
-   
-   
+                }
+                //---hides the progress bar---
+                handler.post(new Runnable() 
+                {
+                    public void run() {
+                        //---0 - VISIBLE; 4 - INVISIBLE; 8 - GONE---
+                        progressBar.setVisibility(8);
+ //                       pd.dismiss();
+                    }
+                });
+            }    
+ 
+            private int doSomeWork() 
+            {
+                           	int key=0;
+                	
+                	key=setListAdapterMy();
+                	
+                	if(key==1){
+                	
+                		return 100;	
+                	}
+                	return key;
+            }
+ 
+        }).start();
+        
+        adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr); 
+        setListAdapter(adapter);    
+        
+       
  }
          
   
@@ -135,12 +193,13 @@ public class MyOnItemSelectedListener implements OnItemSelectedListener{
                     Global.route = (String)spinner1.getSelectedItem();
                        //Global.stop=(String)spinner2.getSelectedItem();
                         Global.stop=StopTitle;
+                        ButtonFavorite.setEnabled(false);
                         startPrediction(Global.route,Global.stop);
                     
                     }
                         
                         else{
-                                
+                      
                         //do nothing    
                         
                         }
@@ -187,14 +246,16 @@ public class MyOnItemSelectedListener implements OnItemSelectedListener{
 
 public void onListItemClick(ListView parent, View v,int position, long id) 
 {   
-        
-   //get which array adapter
-	
-   int i=position;
-   
+   //get which array adapter	
+ //if(position==0){
+	// Toast.makeText(this, "Please click on favorite below to update prediction" ,Toast.LENGTH_SHORT).show();}
+ 
+ //if(position==1){  
+	 int i=position;
+	 
    routeFavList=dbobj.getFavRoute();       
    stopFavList=dbobj.getFavStop();
-   
+   //int up_pos=1;
    ArrayList<String> fTime =new ArrayList<String>();
    fTime.clear();
    
@@ -204,12 +265,11 @@ public void onListItemClick(ListView parent, View v,int position, long id)
         	lv_arr.remove(i);
                 lv_arr.add(i,routeFavList.get(i)+" - "+ stopFavList.get(i)+" :\n No Prediction");
                 adapter.notifyDataSetChanged();
- //               onStart();
+ 
         }
         
         else{
-                
-        System.out.println("I am changing the listview \n");
+               
         if(fTime.size()>=2){
         	lv_arr.remove(i);
         lv_arr.add(i,routeFavList.get(i)+" - "+ stopFavList.get(i)+" :\n"+fTime.get(0)+"min "+fTime.get(1)+"min");
@@ -219,21 +279,17 @@ public void onListItemClick(ListView parent, View v,int position, long id)
         	lv_arr.add(i,routeFavList.get(i)+" - "+ stopFavList.get(i)+" :\n"+fTime.get(0)+"min ");
         }
         
-        //don't set them again !
-        //adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr); 
-         
-        //setListAdapter(adapter);
-           
-      //  Toast.makeText(this, "You have selected " + lv_arr.get(position),Toast.LENGTH_SHORT).show();
         routeFavList.clear();
         stopFavList.clear();
-       // sleep();
+      
         adapter.notifyDataSetChanged();
-        //  onStart();
+      
         
         }       
         
-}
+ }
+        
+
 
 
 
@@ -274,81 +330,69 @@ public void onClick(View p) {
 
 
 
-public void setListAdapterMy(){
-        
-         
-            routeFavList=dbobj.getFavRoute();       
+//public void setListAdapterMy(){
+
+public int setListAdapterMy(){
+	    
+			routeFavList=dbobj.getFavRoute();       
             stopFavList=dbobj.getFavStop();
+            lv_arr.clear();
             
             ArrayList<String> favTime = new ArrayList<String>();
-            
-           if(routeFavList.size()==0){  
+        
+           if(routeFavList.size()==0){
+        	    lv_arr.clear();
                 lv_arr.add("No current Favorites");
-                
-            }
+ 
+           }
             
           
-            else{
-            	
+          else{
+            
+        	  //one fav route and stop
                 if((routeFavList.size()==1)&&(stopFavList.size()==1)){
-                        
-                        favTime.clear();        
-                        favTime = getTime(routeFavList.get(0),stopFavList.get(0)); 
-                        
+            
+                	favTime.clear();        
+        	   			try{
+        	   			
+        	   			favTime = getTime(routeFavList.get(0),stopFavList.get(0)); 
+
                         if(favTime.size()==0){
-                          lv_arr.add(routeFavList.get(0)+" - "+ stopFavList.get(0)+" :\n No Prediction");
+                          lv_arr.add(routeFavList.get(0)+" at "+ stopFavList.get(0)+" :\n No Prediction");
                         }
 
                         else{
                         	if(favTime.size()>=2){
-                        lv_arr.add(routeFavList.get(0)+" - "+ stopFavList.get(0)+" :\n"+favTime.get(0)+"min "+favTime.get(1)+"min");
+                        lv_arr.add(routeFavList.get(0)+" at "+ stopFavList.get(0)+" in :\n"+favTime.get(0)+"min "+favTime.get(1)+"min");
                          }      
-                        	else{
-                        		
-                        		lv_arr.add(routeFavList.get(0)+" - "+ stopFavList.get(0)+" :\n"+favTime.get(0)+"min ");
+                        
+                        	else{	
+                        		lv_arr.add(routeFavList.get(0)+" at "+ stopFavList.get(0)+" in :\n"+favTime.get(0)+"min ");
                         	}
                                         
-                        }
+                        } // end of else
                         
-                }
+                
+          }		catch (Exception e) {
+        	   			  lv_arr.add("No Internet service");
+        	 
+        	   		     return 1;
+        	   			}
+                }//end of if block 
                         
 
-                else if((routeFavList.size()==1)&&(stopFavList.size()==2)){
-                	System.out.println("Option selected is : same route different stops");
-                    
-                	for(int i=0;i<stopFavList.size();i++){
-                    favTime.clear();        
-                    favTime = getTime(routeFavList.get(0),stopFavList.get(i)); 
-                   
-                    if(favTime.size()==0){
-                      lv_arr.add(routeFavList.get(0)+" - "+ stopFavList.get(i)+" :\n No Prediction");
-                    }
-
-                    else{
-                    	if(favTime.size()>=2){
-                    lv_arr.add(routeFavList.get(0)+" - "+ stopFavList.get(i)+" :\n"+favTime.get(0)+"min "+favTime.get(1)+"min");
-                     }      
-                    	else{
-                    		
-                    		lv_arr.add(routeFavList.get(0)+" - "+ stopFavList.get(i)+" :\n"+favTime.get(0)+"min ");
-                    		}
-                                    
-                    	}
-                    //sleep();
-                 }// end of for loop
-            }
-
+         else if((routeFavList.size()>=2)&&(stopFavList.size()>=2)){
+                	
+            	  System.out.println("Option selected is : Different route different stops");
+                	
+                //continue after sleep
                 
-                
-                else if((routeFavList.size()>=2)&&(stopFavList.size()>=2)){
-                	System.out.println("Option selected is : Different route different stops");
             	for (int i=0;i<2;i++){
             		
-                favTime.clear();        
-                
+                favTime.clear();  
+                try{
                 favTime = getTime(routeFavList.get(i),stopFavList.get(i));
                 
-                System.out.println("TIme is "+ favTime.get(0));
                 if(favTime.size()==0){
                        lv_arr.add(routeFavList.get(i)+" - "+ stopFavList.get(i)+" :\n No Prediction");
                 }
@@ -362,14 +406,21 @@ public void setListAdapterMy(){
                 	}  	
                }
                 
-            }
+                }		catch (Exception e) {
+  	   			  lv_arr.add("No Internet service");
+  	   	  	 
+  	   	     return 1;
+  	   			}
+      
                 
-            }// end of routesize
-            }//end of else
+            } // end of for
+                
+            }// end of else fav >=2
+            
+            }// end of main else 
           
-           adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr); 
-           setListAdapter(adapter);     
-        
+        	 
+           return 1;
 }
  
 
@@ -381,18 +432,19 @@ void startPrediction(String r, String s){
 	
 Global.time=getTime(r,s);                
     // get the route and stop tags to be passed to get prediction 
-System.out.println("Global time is : "+Global.time);
+//System.out.println("Global time is : "+Global.time);
 
 if(Global.time.size()==0)
 {
                 System.out.println("predictionError is called .....\n");
-                
+                ButtonFavorite.setEnabled(true);
                 Intent i=new Intent(this,PredictionFailure.class);
                 startActivity(i);
 }
 
 else{
         //display time 
+	 ButtonFavorite.setEnabled(true);
 Intent i=new Intent(this,ShowTime.class);
 startActivity(i);
 //finish();
@@ -422,25 +474,16 @@ ss=listSTag.get(0);
  
 
 String timeUrl=null; 
+String timeXml =null;
 //String timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+Global.routeTag+"&s="+Global.stopTag;
-timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+rr+"&s="+ss;
-//System.out.println("Server Query :: "+timeUrl);
- //System.out.println(" Stop Tag :"+Global.stopTag+" Route Tag :"+Global.routeTag);
-//System.out.println("Combination is :"+listRTag.get(0)+":"+listSTag.get(0));
 
-//System.out.println(" Called prediction");
-String timeXml =null; 
-timeXml=sobj.retrieve(timeUrl);
-
-
-//System.out.println(" xml is : "+timeXml);
-
+timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&s="+ss+"&r="+rr; 
+timeXml=sobj.retrieve(timeUrl);	
 time.clear();
 time= xobj.parseTimeResponse(timeXml);
 
 listRTag.clear();
 listSTag.clear();
-
 
 return time;
 }
@@ -468,27 +511,10 @@ void predictionError(){
 @Override
 protected void onStart() {
     super.onStart();
-    
     // * when the activity is started perform the prediction of two favorites 
-     
     lv_arr.clear();
-    setListAdapterMy();
+ //   setListAdapterMy();
 }
-
-
-
-void sleep(){
-	   long endTime = System.currentTimeMillis() + 12*1000; 
-	   while (System.currentTimeMillis() < endTime) {synchronized (this){ 
-	   	try { wait(endTime - System.currentTimeMillis());              
-	   	} catch (Exception e) {              
-	   		
-	   	}          
-	   	}      
-	   }
-	}
-
-
 }//end of class
 //******************************** UNUSED *********************************************//
 
