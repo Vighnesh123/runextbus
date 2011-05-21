@@ -30,18 +30,19 @@ public class DataHelper{
            public OpenHelper ob;
            private Context context;
            public SQLiteDatabase db;
-           private SQLiteStatement insertStmt;
-   
+           //private SQLiteStatement insertStmt;
+           DataBaseHelper obj=new DataBaseHelper(this.context);
 /**
  *      DataHelper 
  * @param context
  */
 public DataHelper(Context context) {
               this.context = context;
-              DataBaseHelper obj=new DataBaseHelper(this.context);
+         
              
-              OpenHelper openHelper = new OpenHelper(this.context);
+             OpenHelper openHelper = new OpenHelper(this.context);
               this.db = openHelper.getWritableDatabase();
+              
 } // end of DataHelper 
            
 
@@ -55,7 +56,7 @@ public void insertAllSan(ArrayList<String> stopTag,ArrayList<String> stopTitle,S
                 Iterator<String> Titleitr= stopTitle.iterator();
                 
                 while(Tagitr.hasNext()&&Titleitr.hasNext()){
-                                db.execSQL("INSERT INTO RUData(StopTag,StopTitle,RouteTag,RouteTitle) Values ('" + Tagitr.next() + "','" + Titleitr.next() + "','" + routeTag + "','" + routeTitle + "');");
+                                db.execSQL("INSERT INTO "+TABLE_NAME+"(StopTag,StopTitle,RouteTag,RouteTitle) Values ('" + Tagitr.next() + "','" + Titleitr.next() + "','" + routeTag + "','" + routeTitle + "');");
                 
                 }
                 
@@ -73,7 +74,7 @@ public void insertRouteTag(ArrayList<String> routeTag){
                 Object route[] = routeTag.toArray();
                 for(int i=0;i<route.length;i++)
                         
-                db.execSQL("INSERT INTO RUData(RouteTag) Values ('" + route[i] + "');");                        
+                db.execSQL("INSERT INTO "+TABLE_NAME+"(RouteTag) Values ('" + route[i] + "');");                        
 }
 
 
@@ -104,7 +105,7 @@ public void deleteAll_GetLocation() {
 public List<String> populateRouteSpinner() {
   List<String> list = new ArrayList<String>();
                 // populate the first spinner : SpinnerRoute
-      Cursor cursor = this.db.rawQuery("SELECT DISTINCT RouteTitle FROM RUData ", null);
+      Cursor cursor = this.db.rawQuery("SELECT DISTINCT RouteTitle FROM "+TABLE_NAME, null);
       if (cursor.moveToFirst()) {
       do {
             list.add(cursor.getString(0));
@@ -126,7 +127,7 @@ public List<String> populateRouteSpinner() {
  */
 public List<String> populateStopSpinner(String RouteTitle) {
               List<String> list = new ArrayList<String>();
-              Cursor cursor = this.db.rawQuery("SELECT DISTINCT StopTitle FROM RUData WHERE RouteTitle = ('" + RouteTitle + "');", null);
+              Cursor cursor = this.db.rawQuery("SELECT DISTINCT StopTitle FROM "+TABLE_NAME+" WHERE RouteTitle = ('" + RouteTitle + "');", null);
               if (cursor.moveToFirst()) {
               do {
                     list.add(cursor.getString(0));
@@ -178,7 +179,8 @@ public List<String> getRouteTag(String RouteTitle) {
         // TODO Auto-generated method stub
     List<String> list = new ArrayList<String>();
     Cursor cursor;
-        cursor=db.rawQuery("SELECT DISTINCT RouteTag FROM RUData WHERE RouteTitle = ('" + RouteTitle + "');", null);
+        cursor=db.rawQuery("SELECT DISTINCT RouteTag FROM "+ TABLE_NAME +" WHERE RouteTitle = ('" + RouteTitle + "')", null);
+        
         if (cursor.moveToFirst()) {
               do {
                     list.add(cursor.getString(0));
@@ -205,7 +207,7 @@ public List<String> getStopTag(String RouteTitle,String StopTitle) {
     List<String> list = new ArrayList<String>();
     Cursor cursor;
     
-        cursor=db.rawQuery("SELECT DISTINCT StopTag FROM RUData WHERE RouteTitle = ('" + RouteTitle + "') AND StopTitle = ('" + StopTitle + "');", null);       
+        cursor=db.rawQuery("SELECT DISTINCT StopTag FROM "+ TABLE_NAME +" WHERE RouteTitle = ('" + RouteTitle + "') AND StopTitle = ('" + StopTitle + "')", null);       
         
         if (cursor.moveToFirst()) {
               do {
@@ -236,7 +238,7 @@ public void insertAll(ArrayList<String> stopTitle, Object rtag,Object rtitle,Arr
                 for(int i=0;i<stitle.length&stitle[i]!=null;i++)
                 {
                         
-                                db.execSQL("INSERT INTO RUData(StopTitle,RouteTag,RouteTitle,StopTag) Values ('" + stitle[i] + "','" + rtag + "','" + rtitle + "','" + stag[i] + "');");
+                                db.execSQL("INSERT INTO "+TABLE_NAME+"(StopTitle,RouteTag,RouteTitle,StopTag) Values ('" + stitle[i] + "','" + rtag + "','" + rtitle + "','" + stag[i] + "');");
                         
                 }
                 
@@ -333,7 +335,7 @@ public List<String> getRouteForCloseStop(String closestStop) {
         System.out.println("Inside the getRouteforc....");
         System.out.println(closestStop);
     List<String> list = new ArrayList<String>();
-        Cursor cursor =db.rawQuery("SELECT DISTINCT RouteTitle FROM RUData WHERE StopTitle = ('" + closestStop + "');", null);
+        Cursor cursor =db.rawQuery("SELECT DISTINCT RouteTitle FROM "+TABLE_NAME +" WHERE StopTitle = ('" + closestStop + "');", null);
     
     if (cursor.moveToFirst()) {
     do {
@@ -352,7 +354,7 @@ public List<String> getRouteForCloseStop(String closestStop) {
 public List<String> getFavorite(int option) {
     // TODO Auto-generated method stub
     
-        System.out.println("Inside the getFavorite function....\n");
+       // System.out.println("Inside the getFavorite function....\n");
         List<String> favList = new ArrayList<String>();
     //option has to be 1 or 2 
     
@@ -440,7 +442,7 @@ public void addFav(String rTitle,String sTitle){
         System.out.println(sTitle);
         System.out.println(rTitle);
         System.out.println("Adding Favorite with new function");
-db.execSQL("UPDATE RUData SET FavStatus = '"+ flag +"' WHERE StopTitle= '"+ sTitle +"' and RouteTitle  ='"+ rTitle +"'");
+db.execSQL("UPDATE "+TABLE_NAME+" SET FavStatus = '"+ flag +"' WHERE StopTitle= '"+ sTitle +"' and RouteTitle  ='"+ rTitle +"'");
                                                                               
         }// end of updateFavStatus
 
@@ -449,7 +451,7 @@ db.execSQL("UPDATE RUData SET FavStatus = '"+ flag +"' WHERE StopTitle= '"+ sTit
 public void deleteFav(String rTitle,String sTitle){
         int flag=0;
         System.out.println("Deleting Favorite with new function");
-db.execSQL("UPDATE RUData SET FavStatus = '"+ flag +"' WHERE StopTitle= '"+sTitle+"' and RouteTitle  ='"+rTitle+"'");
+db.execSQL("UPDATE "+TABLE_NAME+" SET FavStatus = '"+ flag +"' WHERE StopTitle= '"+sTitle+"' and RouteTitle  ='"+rTitle+"'");
                                                                                 
         }// end of updateFavStatus
 
@@ -458,9 +460,10 @@ db.execSQL("UPDATE RUData SET FavStatus = '"+ flag +"' WHERE StopTitle= '"+sTitl
 public List<String> getFavRoute() {
     // TODO Auto-generated method stub
     
-        System.out.println("Inside the getFavorite function....\n");
+       // System.out.println("Inside the getFavorite function....\n");
+	
 List<String> list = new ArrayList<String>();
-    Cursor cursor =db.rawQuery("SELECT RouteTitle from RUData Where FavStatus='"+1+"'", null);
+    Cursor cursor =db.rawQuery("SELECT RouteTitle from "+TABLE_NAME+" Where FavStatus='"+1+"'", null);
 
 if (cursor.moveToFirst()) {
         
@@ -478,9 +481,9 @@ return list;
 public List<String> getFavStop() {
     // TODO Auto-generated method stub
     
-        System.out.println("Inside the getFavorite function....\n");
+    //    System.out.println("Inside the getFavorite function....\n");
 List<String> list = new ArrayList<String>();
-    Cursor cursor =db.rawQuery("SELECT StopTitle from RUData Where FavStatus='"+1+"'", null);
+    Cursor cursor =db.rawQuery("SELECT StopTitle from "+TABLE_NAME+" Where FavStatus='"+1+"'", null);
 
 if (cursor.moveToFirst()) {
         
