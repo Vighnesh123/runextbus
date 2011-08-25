@@ -47,17 +47,15 @@ public class DataBaseHelper extends SQLiteOpenHelper{
     public void createDataBase() throws IOException{
  
         boolean dbExist = checkDataBase();
-        //boolean dbExist = false;
-        System.out.println("I am here ... but did not kill your app !! \n");
-
-        
+      //  boolean dbExist = false;
+ 
         if(dbExist){
-                
+            System.out.println("Database exists !! \n");
                 //do nothing - database already exist
         }
         
         else{
- 
+            System.out.println("I am here ... but did not kill your app !! \n");
                 //By calling this method and empty database will be created into the default system path
                //of your application so we are gonna be able to overwrite that database with our database.
                 this.getReadableDatabase();
@@ -114,7 +112,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
  System.out.println("Getting file from aSsets folder");
         // Path to the just created empty db
         String outFileName = DB_PATH + DB_NAME;
- 
+
         //Open the empty db as the output stream
         OutputStream myOutput = new FileOutputStream(outFileName);
  
@@ -144,8 +142,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         public synchronized void close() {
  
             if(myDataBase != null)
-                    myDataBase.close();
- 
+            myDataBase.close();
             super.close();
  
         }
@@ -223,5 +220,17 @@ void start(){
         }       
            
 }
+
+
+public void closeDataBase()
+{
+    if(this.myDataBase != null)
+    {
+        if(this.myDataBase.isOpen())
+            this.myDataBase.close();
+    }
+}   
+
+
 
 }

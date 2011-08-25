@@ -28,10 +28,14 @@ public class StopsHandler extends DefaultHandler {
 			String qName, Attributes atts) throws SAXException {
 		
 		buffer.setLength(0);
+	//	System.out.println("Stop:::::" + atts.getValue("tag") + " "+ atts.getValue("title"));
 		if(localName.equals ("stop")){
+			
 		stopList = new Stops();
+		
 		stopList.tag =atts.getValue("tag");
 		stopList.title =atts.getValue("title");
+		//System.out.println(":::::" + stopList.tag + " "+ stopList.title);
 		//add all tags to this 
 		myTag.add(stopList.tag);
 		myTitle.add(stopList.title);

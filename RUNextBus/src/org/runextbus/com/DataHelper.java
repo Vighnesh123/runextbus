@@ -27,19 +27,20 @@ public class DataHelper{
            private static final String TABLE_NAME_Fav = "Favorite";
 
            
-           public OpenHelper ob;
+           //public OpenHelper ob;
            private Context context;
+         
            public SQLiteDatabase db;
            //private SQLiteStatement insertStmt;
-           DataBaseHelper obj=new DataBaseHelper(this.context);
+           
 /**
  *      DataHelper 
  * @param context
  */
 public DataHelper(Context context) {
               this.context = context;
-         
-             
+              DataBaseHelper obj=new DataBaseHelper(this.context);
+              
              OpenHelper openHelper = new OpenHelper(this.context);
               this.db = openHelper.getWritableDatabase();
               
@@ -420,7 +421,7 @@ public void deleteAll_fav() {
         
           this.db.delete(TABLE_NAME_Fav, null, null);
         
-          insertFav(1);
+        //  insertFav(1);
           //insertFav(2);
 }//end of deleteAll_fav
 

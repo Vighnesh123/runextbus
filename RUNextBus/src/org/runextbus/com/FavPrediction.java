@@ -3,8 +3,11 @@ package org.runextbus.com;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -19,7 +22,9 @@ public class FavPrediction extends Activity implements OnClickListener {
  XmlParser xobj= new XmlParser();
  String timeXml=null;
  private TextView output;
- 
+ String r;
+ String s;
+ String timeUrl;
 
  
 public void onCreate(Bundle savedInstanceState) {
@@ -83,19 +88,13 @@ public void onCreate(Bundle savedInstanceState) {
 		//check if ne more prediction available to display
 		
 		if(time.size()>1){
-		if((String)time.get(1)!=null){
-		
 			times="					"+(String)time.get(1)+" min"+"\n";
 		sb.append(times);
 		}
-		}
 		
 		if(time.size()>2){
-		if((String)time.get(2)!=null){
-			//String timeThree = (String)time.get(2);
 			times="					"+(String)time.get(2)+" min"+"\n";
 			sb.append(times);
-		}
 		}
 		
 		this.output.setText(sb.toString());
@@ -148,33 +147,61 @@ public void onClick(View v) {
 	    		case R.id.ButtonUpdate:
 	    		// call update with database returned values
 	    				
-	    					updateTime(Global.favRouteTag,Global.favStopTag);
-	    					break;
-	    					
+	    		updateTime(Global.favRouteTag,Global.favStopTag); 
+	    		break;
 
 	    		}// end of case statements
-	
 	
 }//end of onClick
 
 
 public void updateTime(String route, String stop){
 
+	
+	r=route;
+	s=stop;
+	
+	
    /** All the URL's for invoking API on nextBus.com 
  	*	Make http request with stop and route given*/
+	
+/*	final ProgressDialog dialog = ProgressDialog.show(this,"", "Refreshing ...", true);
     
-  String timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+route+"&s="+stop;
-  timeXml = sobj.retrieve(timeUrl);
-  ArrayList<String> timeMinutes = xobj.parseTimeResponse(timeXml);
-  int count = timeMinutes.size();
-  if(count!=0){
-  // pass the entire arrayList
-	  displayTime(timeMinutes);
-	  }
-  
-  else{
-	  displayError();
-  }
+	final Handler handler = new Handler() {
+	   public void handleMessage(Message msg) {
+	      dialog.dismiss();
+	      }
+	   };
+	   
+	Thread checkUpdate = new Thread() {  
+
+		public void run() {
+
+try{*/
+
+   timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+r+"&s="+s;
+
+  /*}
+catch (Exception e) {
+             System.out.println("Oooops some thing went wrong with api query !!! ");
+             //connection error screen ??
+ }
+			handler.sendEmptyMessageDelayed(0,2000);
+	}};checkUpdate.start(); */
+	   
+	   timeXml = sobj.retrieve(timeUrl);
+	   ArrayList<String> timeMinutes = xobj.parseTimeResponse(timeXml);
+	   if(timeMinutes.size()!=0){
+	   // pass the entire arrayList
+		  
+	   	  displayTime(timeMinutes);
+	   	  }
+
+	   else{
+		  
+	   	  displayError();
+	   	}
+
 
 }//end of update
 

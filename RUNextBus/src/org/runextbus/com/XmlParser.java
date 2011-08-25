@@ -2,6 +2,7 @@ package org.runextbus.com;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -87,11 +88,11 @@ public class XmlParser {
 			
 			XMLReader xmlreader = initializeReader();
 			RouteHandler RouteHandler = new RouteHandler();
+			
 			// assign our handler
 			xmlreader.setContentHandler(RouteHandler);
 			// perform the synchronous parse
 			xmlreader.parse(new InputSource(new StringReader(xml)));
-			
 			return RouteHandler.retrieveRouteTag();			
 			
 		} 
@@ -152,7 +153,48 @@ public ArrayList<String> parseTimeResponse(String xml) {
 	}
 
 	
+public HashMap<String,ArrayList<String>> parseDirResponseTag(String xml) {
 	
-	
-	
+	try {
+		
+		XMLReader xmlreader = initializeReader();
+		DirectionHandler DirectionHandler = new DirectionHandler();
+		
+		// assign our handler
+		xmlreader.setContentHandler(DirectionHandler);
+		// perform the synchronous parse
+		xmlreader.parse(new InputSource(new StringReader(xml)));
+		
+		return DirectionHandler.retrieveDirStopTag();			
+		
+	} 
+	catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	}
+
 }
+
+public HashMap<String,ArrayList<String>> parseDirResponseTitle(String xml) {
+	
+	try {
+		
+		XMLReader xmlreader = initializeReader();
+		DirectionHandler DirectionHandler = new DirectionHandler();
+		
+		// assign our handler
+		xmlreader.setContentHandler(DirectionHandler);
+		// perform the synchronous parse
+		xmlreader.parse(new InputSource(new StringReader(xml)));
+		
+		return DirectionHandler.retrieveDirStopTitle();			
+		
+	} 
+	catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	}
+
+}
+
+}// end of class 

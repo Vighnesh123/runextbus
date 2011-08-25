@@ -11,15 +11,11 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
-
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity; 
 import android.content.DialogInterface;
 import android.content.Intent;
-
 import org.runextbus.com.GetPrediction;
 
 public class listingFav extends ListActivity implements OnClickListener 
@@ -36,6 +32,7 @@ public class listingFav extends ListActivity implements OnClickListener
 	public boolean[] _selections ;
 	public GetPrediction gpObj;	
 	public int manage=0;
+	
     @Override  
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -43,29 +40,36 @@ public class listingFav extends ListActivity implements OnClickListener
     	this.dbobj=new DataHelper(this);
         super.onCreate(savedInstanceState);  
         setContentView(R.layout.screen02);
-        listCreation();  
+          
     	
         ManageButton=(Button)findViewById(R.id.ManageButton);
     	ManageButton.setOnClickListener((OnClickListener) this);
+    	ManageButton.setEnabled(false);
+
+    	listCreation();
 
     }
     	
-    	public void listCreation(){
-    	routeList=dbobj.getFavRoute();	    
+   public void listCreation(){
+   
+	   //get the list of all routes and stops that are marked favorites 
+	   routeList=dbobj.getFavRoute();	    
 	    stopList=dbobj.getFavStop();
 	    
 	    if(routeList.size()==0){
-	    	
+	    	//show no favorites in case list is empty 
 	    	lv_arr.add("No current Favorites");
-	    //	_options = lv_arr.toArray(new CharSequence[lv_arr.size()]);
-		//	_selections= new boolean[ _options.length];
-	    
-			adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr);
-			 setListAdapter(adapter);	    
+	    	adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr);
+			setListAdapter(adapter);	   
+			
 	    }
 	    
 	    
 	    else{
+	    	
+	    //Manage button is needed if there are entries in list view 
+	    	
+	    ManageButton.setEnabled(true);
 	    System.out.println("DB returned\n");
 		for (int i=0;i<routeList.size();i++){
 		lv_arr.add(routeList.get(i)+" "+ stopList.get(i));
@@ -75,7 +79,7 @@ public class listingFav extends ListActivity implements OnClickListener
 		_selections= new boolean[ _options.length];
 		 adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr);
 		 setListAdapter(adapter);
-
+		 
 	    }
     }    // end of listCreation
     
@@ -84,22 +88,24 @@ public class listingFav extends ListActivity implements OnClickListener
     {   
         //Toast.makeText(this, "You have selected " + lv_arr.get(position),Toast.LENGTH_SHORT).show();
         int i=position+1;
-        System.out.println("THE NUMBER SELECTED IS "+i);    
+        System.out.println("THE NUMBER SELECTED IS "+i);
         favPrediction(i-1);
         
     }
     
     
     void favPrediction(int option){
-    	
-    	System.out.println("Fav prediction is called .....\n");
     	 
+    	
+    	if(routeList.size()==0){
+ 		   
+ 		   //do nothing if no favorites  
+ 	   }
+ 	   else{
+    	//get the route and stop combination from favorites list if favorites are present   
     	List<String> listRouteTag = new ArrayList<String>();
-        
-    	   listRouteTag=dbobj.getRouteTag(routeList.get(option));
-    	   Global.routeTag = listRouteTag.get(0);
-    	   
-    	    
+    	listRouteTag=dbobj.getRouteTag(routeList.get(option));
+    	   Global.routeTag = listRouteTag.get(0);	   
     	    List<String> listStopTag = new ArrayList<String>();
     	    listStopTag=dbobj.getStopTag(routeList.get(option),stopList.get(option));
     	    Global.stopTag = listStopTag.get(0);
@@ -111,24 +117,25 @@ public class listingFav extends ListActivity implements OnClickListener
     	 
     	 Intent i=new Intent(this,FavPrediction.class);
     	 startActivity(i);
-    	 	 
+    	   }
     }
 
     public void onClick(View p) {
-    	// TODO Auto-generated method stub
-    	     	
-        
+    	// there is only button in this view
         switch(p.getId())
-    	
     	{
     	
-    	case R.id.ManageButton:	
-    			
+    	case R.id.ManageButton:			
     		System.out.println(_options);
     		System.out.println("Value of manage is : "+manage);
+    		
+    		//to refresh the dialog contents with updates list view - can also migrate it to onPause()?
+    		onStart();
+    		//show updated manage dialog 
     		showDialog(manage);	
     	 	break;
     	}
+        
     } // end of onclick for manage favoirtes button
 
     @Override
@@ -150,10 +157,12 @@ public class listingFav extends ListActivity implements OnClickListener
     	{
     		Log.i( "FAVORITES LIST SELECTION", _options[ clicked ] + " selected: " + selected );
     	}
+    	
     }// end of class DialogselectionclickHandler
 
 
-    //if submit id pressed then handle it
+    //if Manage Favorites is pressed then handle it
+    
     public class DialogButtonClickHandler implements DialogInterface.OnClickListener
     {
     	public void onClick( DialogInterface dialog, int clicked )
@@ -162,47 +171,59 @@ public class listingFav extends ListActivity implements OnClickListener
     		{
     			case DialogInterface.BUTTON_POSITIVE:
     				deleteSelected();
-//    				adapter.notifyDataSetChanged();
     				break;
     		}
     	}
-    }// end of dialoghandler
+    }// end of dialog handler
 
     protected void deleteSelected(){
     	for( int i = 0; i < _options.length; i++ ){
     		if(_selections[i]){
     		Log.i( "SELECTED LIST", _options[ i ] + " selected ");
     		dbobj.deleteFav(routeList.get(i),stopList.get(i));
-	
-    		
     		}
     	}
     	
-    	adapter.notifyDataSetChanged();  
+    	//adapter.notifyDataSetChanged(); doesn't work as the list needs to be updated first   
     	onStart();
+    
     }// end of delete selected 
-
-    void refresh(){
-    	//routeList=dbobj.getFavRoute();	    
-	    //stopList=dbobj.getFavStop();
-    	//kill activity or keep????
-	    lv_arr.clear();
-	    Intent i=new Intent(this,listingFav.class);
-   	 	startActivity(i);
-    }
+ 
+    
+    /*
+     * onStart() : call this every time you want to refresh dialog and the list view
+     * (non-Javadoc)
+     * @see android.app.Activity#onStart()
+     * By default executed on start of activity 
+     */
     
     @Override
     protected void onStart() {
         super.onStart();
-       
       routeList.clear();
       stopList.clear( );
       lv_arr.clear();
-       manage=manage+1;
+      
+       manage=manage+1;//the version of dialog view 
+       ManageButton.setEnabled(false);
         listCreation();
         
     }
 
-}//end of refresh
+}
 
-// end of class listingFav
+//end of class listingFav
+
+
+//********************************************UN USED******************************************//
+/* void refresh(){
+ 	//routeList=dbobj.getFavRoute();	    
+	    //stopList=dbobj.getFavStop();
+ 	//kill activity or keep????
+	    lv_arr.clear();
+	    Intent i=new Intent(this,listingFav.class);
+	 	startActivity(i);
+ }*/
+ 
+
+
