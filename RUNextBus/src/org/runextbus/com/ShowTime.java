@@ -27,8 +27,10 @@ public class ShowTime extends Activity implements OnClickListener  {
 	    ServerInterface sobj = new ServerInterface();
 	    XmlParser xobj= new XmlParser();
 	    String timeXml=null;
-	    private DataHelper dbobj;	    
-	  
+	    private DataHelper dbobj1;	    
+	    String rr;
+	    String ss;
+	    
 /**
  * onCreate	  
  */
@@ -37,6 +39,7 @@ public void onCreate(Bundle savedInstanceState) {
    
 	super.onCreate(savedInstanceState);
     setContentView(R.layout.showtime);
+    
     displayTime(Global.time);    
    
 }
@@ -48,7 +51,9 @@ public void onCreate(Bundle savedInstanceState) {
 
 void displayTime(ArrayList <String> time){
 	
-	output = (TextView)findViewById(R.id.out_text);    	        
+	output = (TextView)findViewById(R.id.out_text);
+	rr=Global.route;
+	ss=Global.stop;
 	String times= null;
 	StringBuilder sb = new StringBuilder();
 	times = "  ROUTE	:	"+Global.route+"\n";
@@ -96,8 +101,8 @@ void displayTime(ArrayList <String> time){
 	
 	
 	 final CheckBox ButtonCheck=(CheckBox)findViewById(R.id.ButtonCheck);
-	   	ButtonCheck.setOnClickListener(this);
-	
+	 ButtonCheck.setOnClickListener(this);
+	 ButtonCheck.setChecked(false);
 
 } // end of displayTime
 
@@ -108,42 +113,34 @@ void displayTime(ArrayList <String> time){
 
 public void onClick(View v) {
 		// TODO Auto-generated method stub
-	this.dbobj=new DataHelper(this);
-	switch(v.getId())
-		
-		{
-		
-		case R.id.ButtonUpdate:
-	// call update with database returned values
-	//change the Global.route and Global.stop values
-		
-			updateTime(Global.routeTag, Global.stopTag);
-			break;			
-		
-		case R.id.ButtonCheck:
+	this.dbobj1=new DataHelper(this);
 	
+	switch(v.getId())
+		{	
+		case R.id.ButtonUpdate:
+		
+			List<String> routeTag=dbobj1.getRouteTag(rr);
 
+			List<String> stopTag=dbobj1.getStopTag(rr,ss);
+			
+			Global.temprouteTag=routeTag.get(0);
+			Global.tempstopTag=stopTag.get(0);
+			
+			System.out.println("R and S:"+Global.tempstopTag+":"+Global.tempstopTag);
+			
+			updateTime(Global.temprouteTag, Global.tempstopTag);
+			break;		
+	
+		case R.id.ButtonCheck:
 	 if (((CheckBox) v).isChecked()) {      
-            System.out.println("MARKING AS FAVORITE \n");
-            dbobj.addFav(Global.route,Global.stop);
-            
-    	((CheckBox) v).setChecked(false);
+         //   System.out.println("MARKING AS FAVORITE \n");
+         dbobj1.addFav(Global.route,Global.stop);   
     	Toast.makeText(ShowTime.this, "MARKED AS FAVORITE", Toast.LENGTH_SHORT).show();
 	 
 	 }
-	 
-	 else {
-			((CheckBox) v).setChecked(false);
-			 //dbobj.deleteFav(Global.route,Global.stop);
-			
-			//Toast.makeText(GetPrediction.this, "Favorite cannot be undone", Toast.LENGTH_SHORT).show();
-        }
-	
-	break;
+		break;
 	
 } // end of switch case 
-
-	       	
 }// end of onClick
 
 /**
@@ -185,8 +182,6 @@ public void displayError(){
 
 	
 	 } // end of displayError
-	
+
 }// end of Showtime class
-
-
 

@@ -27,6 +27,7 @@ public class PredictionFailure extends Activity {
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -52,7 +53,8 @@ public class PredictionFailure extends Activity implements OnClickListener  {
 	    XmlParser xobj= new XmlParser();
 	    String timeXml=null;
 	    public ShowTime stobj;
-	   
+	    private DataHelper dbobj2;
+	    
 /**
  * onCreate	  
  */
@@ -103,7 +105,7 @@ void displayError(){
 
 public void onClick(View v) {
 		// TODO Auto-generated method stub
-
+	this.dbobj2=new DataHelper(this);
 	switch(v.getId())
 		
 		{
@@ -111,7 +113,15 @@ public void onClick(View v) {
 		case R.id.ButtonUpdate:
 	// call update with database returned values
 	//change the Global.route and Global.stop values
-		
+			List<String> routeTag=dbobj2.getRouteTag(Global.route);
+
+			List<String> stopTag=dbobj2.getStopTag(Global.route,Global.stop);
+			
+			Global.routeTag=routeTag.get(0);
+			Global.stopTag=stopTag.get(0);
+			
+			System.out.println("R and S:"+Global.routeTag+":"+Global.stopTag);
+
 			updateTime(Global.routeTag, Global.stopTag);
 			break;
 					
@@ -132,12 +142,13 @@ public void updateTime(String route, String stop){
     
   String timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+route+"&s="+stop;
   timeXml = sobj.retrieve(timeUrl);
+  
   ArrayList<String> timeMinutes = xobj.parseTimeResponse(timeXml);
   
-  if(timeXml!=null){
+  int count = timeMinutes.size();
+  if(count!=0){
   // pass the entire arrayList
 	  stobj.displayTime(timeMinutes);}
-  
   else{
 	  displayError();
   }

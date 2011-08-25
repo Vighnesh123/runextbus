@@ -21,6 +21,11 @@ public class Global {
 	public static String favStop=null;
 	public static String routeTag;
 	public static String stopTag;
+	public static String temprouteTag;
+	public static String tempstopTag;
 	public static String favRouteTag;
 	public static String favStopTag;
+
+	
+
 }

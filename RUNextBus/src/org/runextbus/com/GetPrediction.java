@@ -1,8 +1,10 @@
 package org.runextbus.com;
 
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -42,7 +44,7 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
     ServerInterface sobj =  new ServerInterface();
     XmlParser xobj= new XmlParser();
     private DataHelper dbobj;
-    private ShowFavtime sftob=new ShowFavtime();
+    
     
     
     //variables used by spinners 
@@ -53,7 +55,7 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
     public List<String> stopList = new ArrayList<String>();
     public List<String> routeList = new ArrayList<String>();
         
-        // variables used by Listview for favorite prediction 
+        // variables used by List view for favorite prediction 
     private List<String> lv_arr=new ArrayList<String>();
     public List<String> routeFavList = new ArrayList<String>();
     public List<String> stopFavList = new ArrayList<String>();
@@ -80,9 +82,9 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
         //activity
         myAct=this;
   
-    /* For Database to be synced with nextbus.com enable this
-    * deleteDb();
-    startUp(); */
+    /* For Database to be synced with nextbus.com enable this*/
+     deleteDb();
+    startUp(); 
     
     //for the first time call this to set the favorite predictions 
     
@@ -156,7 +158,8 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
  
         }).start();
         
-        adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr); 
+        //adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr);
+        adapter=new ArrayAdapter<String>(this,R.layout.list_item,lv_arr);
         setListAdapter(adapter);    
         
        
@@ -200,8 +203,18 @@ public class MyOnItemSelectedListener implements OnItemSelectedListener{
                    
                     Global.stop=StopTitle;
                                 ButtonFavorite.setEnabled(false);
-                                startPrediction(Global.route,Global.stop);  
+                                try{
+                                startPrediction(Global.route,Global.stop);
                                 System.out.println("Going inside the dialog now !");
+                                }
+                                	catch (Exception e) {
+                                		lv_arr.clear();
+                                		lv_arr.add("No Internet service..Please try again later");
+                                		adapter.notifyDataSetChanged();
+                                	}
+                    
+                               
+                                
                     }
                         
                         else{
@@ -246,11 +259,9 @@ public class MyOnItemSelectedListener implements OnItemSelectedListener{
 
 public void onListItemClick(ListView parent, View v,int position, long id) 
 {   
-           int i=position;
-         
+           int i=position;      
    routeFavList=dbobj.getFavRoute();       
    stopFavList=dbobj.getFavStop();
-   
    
    if(routeFavList.size()==0){
        lv_arr.clear();
@@ -424,6 +435,7 @@ public int setListAdapterMy(){
  */
 
 void startPrediction(String r, String s){	
+
 sproute=r;
 spstop=s;
 	
@@ -440,21 +452,25 @@ final ProgressDialog dialog = ProgressDialog.show(myAct,"", "Loading. Please wai
 		public void run() {
 		   System.out.println("Inside the dialog !!");
 		  try{
-		   Global.time=getTime(sproute,spstop); 
-          // ButtonFavorite.setEnabled(true);
+		   Global.time=getTime(sproute,spstop);
 		   if(Global.time.size()!=0){
-		   Intent i=new Intent(myAct,ShowTime.class);
-		   startActivity(i);		   
-		   }
-		   else{
-               Intent i=new Intent(myAct,PredictionFailure.class);
-               startActivity(i);			   
-		   }
+			   Intent i=new Intent(myAct,ShowTime.class);
+			   startActivity(i);		   
+			   }
+			   else{
+	               Intent i=new Intent(myAct,PredictionFailure.class);
+	               startActivity(i);			   
+			   }
+
+          // ButtonFavorite.setEnabled(true);
+		   
 		  }
 			catch (Exception e) {
                System.out.println("Oooops some thing went wrong !!! ");
-		   }
-			handler.sendEmptyMessage(0);
+               
+			}
+			
+						handler.sendEmptyMessage(0);
 	      }
 	   };checkUpdate.start();
 
@@ -512,7 +528,7 @@ protected void onRestart() {
     adapter.notifyDataSetChanged();
 }
 
-}//end of class GetPrediction 
+//}//end of class GetPrediction 
 
 
 
@@ -523,10 +539,10 @@ protected void onRestart() {
 */
 
 
-/*void deleteDb(){
-this.dbobj = new DataHelper(this); // database object 
+void deleteDb(){
+ 
 this.dbobj.deleteAll(); // Delete data from the table RUData
-this.dbobj.deleteAll_fav(); // Delete data from the table RUData
+this.dbobj.deleteAll_fav(); // Delete data from the Fav table
 
 }
 
@@ -542,7 +558,8 @@ void startUp(){
     ServerInterface sobj = new ServerInterface();
     XmlParser xobj= new XmlParser();
     
-       
+    HashMap<String,ArrayList<String>> dirTag=new HashMap<String,ArrayList<String>>();
+    HashMap<String,ArrayList<String>> dirTitle=new HashMap<String,ArrayList<String>>();
     
    // All the URL's for invoking API on nextBus.com 
  
@@ -584,18 +601,39 @@ void startUp(){
                                 //String rTitle = itrTitle.next();
                                 
                                 //create a new url for each route 
+                                System.out.println(":::::"+rTag);
                                 stopsUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=routeConfig&a="+Global.agency+"&r="+rTag;
                                 
                                 String stops= sobj.retrieve(stopsUrl);
-                                ArrayList<String> stopTag = xobj.parseStopsResponseTag(stops);
-                                ArrayList<String> stopTitle = xobj.parseStopsResponseTitle(stops);
-                        
                                 
-                                 // Put these in database  
+                              //  ArrayList<String> stopTag = xobj.parseStopsResponseTag(stops);
+                               // ArrayList<String> stopTitle = xobj.parseStopsResponseTitle(stops);
+                                 dirTag = xobj.parseDirResponseTag(stops);
+                                 dirTitle = xobj.parseDirResponseTitle(stops);
+                              
+                                
+                                Set<String> keys1 =dirTag.keySet();
+                                Set<String> keys2 =dirTitle.keySet();
+                                Iterator<String> keysIter1 = keys1.iterator();
+                                Iterator<String> keysIter2 = keys2.iterator();
+                                
+                                while (keysIter1.hasNext()&&keysIter2.hasNext())
+                                {
+                                	String k1 = keysIter1.next();
+                                	String k2 = keysIter2.next();
+                                	
+                                	ArrayList<String> stopTag = dirTag.get(k1);
+                                    ArrayList<String> stopTitle = dirTitle.get(k2);
+                                 //   System.out.println(":::::::::::::"+stopTag.size()+"::::::::"+stopTitle.size());
+                                   // System.out.println(":::::::::::::"+k1+"::::"+k2);
+                                  dbobj.insertAll(stopTitle,rTagPass[i],rTitlePass[i],stopTag);
+                                }
+                                    
+                                // Put these in database  
                                  //Update RUData table with column 
                                  
                                 
-        dbobj.insertAll(stopTitle,rTagPass[i],rTitlePass[i],stopTag);
+        
         i++;
                         
  } // end of while 
@@ -613,11 +651,11 @@ else {
                         
 } // end of startup
 
-*/
 
 
 
-//}//end of Class GetPrediction      
+
+}//end of Class GetPrediction      
 
      
 
