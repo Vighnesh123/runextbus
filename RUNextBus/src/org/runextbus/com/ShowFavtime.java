@@ -62,11 +62,11 @@ void displayTime(ArrayList <String> time){
 	times="						"+ timeTwo+"min"+"\n";
 	sb.append(times);
 	}
-	/*Iterator<String> itr= time.iterator();
+	/*<String> itr= time.iterator();
 	while(itr.hasNext()){
 	
 		times="						"+ itr.next()+"min"+"\n";
-		sb.append(times);
+		sb.appenIteratord(times);
 		
 	}*/
 		

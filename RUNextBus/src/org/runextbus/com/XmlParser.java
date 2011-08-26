@@ -153,7 +153,7 @@ public ArrayList<String> parseTimeResponse(String xml) {
 	}
 
 	
-public HashMap<String,ArrayList<String>> parseDirResponseTag(String xml) {
+public HashMap<String,Direction> parseDirResponseTag(String xml) {
 	
 	try {
 		
@@ -165,8 +165,7 @@ public HashMap<String,ArrayList<String>> parseDirResponseTag(String xml) {
 		// perform the synchronous parse
 		xmlreader.parse(new InputSource(new StringReader(xml)));
 		
-		return DirectionHandler.retrieveDirStopTag();			
-		
+		return DirectionHandler.retrieveDirStop();
 	} 
 	catch (Exception e) {
 		e.printStackTrace();
@@ -175,7 +174,7 @@ public HashMap<String,ArrayList<String>> parseDirResponseTag(String xml) {
 
 }
 
-public HashMap<String,ArrayList<String>> parseDirResponseTitle(String xml) {
+/*public HashMap<String,ArrayList<String>> parseDirResponseTitle(String xml) {
 	
 	try {
 		
@@ -195,6 +194,6 @@ public HashMap<String,ArrayList<String>> parseDirResponseTitle(String xml) {
 		return null;
 	}
 
-}
+}*/
 
 }// end of class 

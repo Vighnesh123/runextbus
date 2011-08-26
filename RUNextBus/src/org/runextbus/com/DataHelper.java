@@ -52,7 +52,7 @@ public DataHelper(Context context) {
 public void insertAllSan(ArrayList<String> stopTag,ArrayList<String> stopTitle,String routeTag,String routeTitle){
                 
         //insert all of them together StopTag Stoptitle RouteTag RouteTitle 
-        
+        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
                 Iterator<String> Tagitr= stopTag.iterator();
                 Iterator<String> Titleitr= stopTitle.iterator();
                 
@@ -228,21 +228,25 @@ public List<String> getStopTag(String RouteTitle,String StopTitle) {
  * insertAll : To insert all data to RUData table 
  * @param stopTitle rtag rtitle stopTag
  * @return null
- * @author Santosh Sriram
+ * @author
  */
 
-public void insertAll(ArrayList<String> stopTitle, Object rtag,Object rtitle,ArrayList<String> stopTag){
-        
+public void insertAll(ArrayList<String> stopTitle, Object rtag,Object rtitle,ArrayList<String> stopTag,String dirTag,String dirTitle){
+        System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+        System.out.println("::::::::::::"+ stopTag.size()+":::::"+stopTitle.size()+":::::");
+       
         Object stitle[] = stopTitle.toArray();
         Object stag[]=stopTag.toArray();
         
-                for(int i=0;i<stitle.length&stitle[i]!=null;i++)
+                //for(int i=0;i<stitle.length&stitle[i]!=null;i++)
+                	for(int i=0;i<stopTitle.size()-1&stitle[i]!=null;i++)
                 {
-                        
-                                db.execSQL("INSERT INTO "+TABLE_NAME+"(StopTitle,RouteTag,RouteTitle,StopTag) Values ('" + stitle[i] + "','" + rtag + "','" + rtitle + "','" + stag[i] + "');");
-                        
+                	System.out.println( stitle[i] + "','" + rtag + "','" + rtitle + "','" + stag[i] + "','"+ dirTag +"','" + dirTitle);
+                                db.execSQL("INSERT INTO "+TABLE_NAME+"(StopTitle,RouteTag,RouteTitle,StopTag,DirTag,DirTitle) Values ('" + stitle[i] + "','" + rtag + "','" + rtitle + "','" + stag[i] + "','"+ dirTag +"','" + dirTitle + "');");
+                      
                 }
                 
+                System.out.println("DONE");
                 
 }// end of insertAll
 

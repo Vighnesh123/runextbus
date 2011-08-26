@@ -30,6 +30,8 @@ import org.runextbus.com.Global;
 import org.runextbus.com.ServerInterface;
 import java.util.Iterator;
 import org.runextbus.com.FavPrediction;
+import org.runextbus.com.model.Direction;
+
 import android.widget.Toast;
 
 
@@ -54,7 +56,7 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
     public Activity myAct;
     public List<String> stopList = new ArrayList<String>();
     public List<String> routeList = new ArrayList<String>();
-        
+   
         // variables used by List view for favorite prediction 
     private List<String> lv_arr=new ArrayList<String>();
     public List<String> routeFavList = new ArrayList<String>();
@@ -72,6 +74,8 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
     public String StopTitle;
     public String sproute;
     public String spstop;
+    public ArrayList<String> stopTag = new ArrayList<String>();
+	public ArrayList<String> stopTitle = new ArrayList<String>();
         @Override
         public void onCreate(Bundle savedInstanceState) {
     
@@ -565,21 +569,15 @@ void startUp(){
  
   String routeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=routeList&a="+Global.agency;
   routeXml = sobj.retrieve(routeUrl);
-         
   
-                        if(routeXml != null){
-                
-                                //System.out.println("GetPrediction Log: Retrieve http response SUCCESS\n");
+  int i=0;
+  
+    if(routeXml != null){
                                 
                                 ArrayList<String> routeTag = xobj.parseRouteResponseTag(routeXml);
-                
                                 ArrayList<String> routeTitle = xobj.parseRouteResponseTitle(routeXml);
-                
-                       
-                                
                                 
                                 //use iterator to iterate through arrayList
-                                
                                 Object rTagPass[]=routeTag.toArray();
                                 Object rTitlePass[]=routeTitle.toArray();
                                 
@@ -587,54 +585,42 @@ void startUp(){
                                 Iterator<String> itrTitle= routeTitle.iterator();
                                 
                                 
-                                int i=0;
-                                
                                 // if we use the iterator logic to traverse
                                 //while((itrTag.hasNext())&&(itrTitle.hasNext())){
           
-                                while(itrTag.hasNext()){
+           while(itrTag.hasNext()){
                                         
                                 // Put rTag into a variable as itrTag shall unnecessarily increment otherwise   
-                                        
                                 String rTag = itrTag.next();
-                                
                                 //String rTitle = itrTitle.next();
-                                
                                 //create a new url for each route 
-                                System.out.println(":::::"+rTag);
+                                
                                 stopsUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=routeConfig&a="+Global.agency+"&r="+rTag;
-                                
                                 String stops= sobj.retrieve(stopsUrl);
+                                HashMap<String,Direction> hm=new HashMap<String,Direction>();
+                            	hm=xobj.parseDirResponseTag(stops);
+                                Set<String> keys1 =hm.keySet();
                                 
-                              //  ArrayList<String> stopTag = xobj.parseStopsResponseTag(stops);
-                               // ArrayList<String> stopTitle = xobj.parseStopsResponseTitle(stops);
-                                 dirTag = xobj.parseDirResponseTag(stops);
-                                 dirTitle = xobj.parseDirResponseTitle(stops);
-                              
-                                
-                                Set<String> keys1 =dirTag.keySet();
-                                Set<String> keys2 =dirTitle.keySet();
                                 Iterator<String> keysIter1 = keys1.iterator();
-                                Iterator<String> keysIter2 = keys2.iterator();
                                 
-                                while (keysIter1.hasNext()&&keysIter2.hasNext())
+                                while (keysIter1.hasNext())
                                 {
                                 	String k1 = keysIter1.next();
-                                	String k2 = keysIter2.next();
-                                	
-                                	ArrayList<String> stopTag = dirTag.get(k1);
-                                    ArrayList<String> stopTitle = dirTitle.get(k2);
-                                 //   System.out.println(":::::::::::::"+stopTag.size()+"::::::::"+stopTitle.size());
-                                   // System.out.println(":::::::::::::"+k1+"::::"+k2);
-                                  dbobj.insertAll(stopTitle,rTagPass[i],rTitlePass[i],stopTag);
-                                }
+                                	Direction dirOb=new Direction();
+                                	dirOb=hm.get(k1);
+                                	String k2=dirOb.dirTitle;
+                                	stopTag=dirOb.stopTag;
+                                    stopTitle=dirOb.stopTitle;
+                              
+                                    // Put these in database  
+                                    //Update RUData table with column
+								  System.out.println("TAG::: "+":::  "+i+"::: "+k1+" TITLE::::: "+k2+":::::::: "+ stopTag+"::::::"+stopTitle);
+                                  dbobj.insertAll(stopTitle,rTagPass[i],rTitlePass[i],stopTag,k1,k2);
                                     
-                                // Put these in database  
-                                 //Update RUData table with column 
-                                 
-                                
-        
-        i++;
+                               }
+                                    
+                       i++;        
+                              
                         
  } // end of while 
     

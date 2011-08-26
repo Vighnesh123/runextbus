@@ -1,5 +1,7 @@
 package org.runextbus.com.model;
 
+import java.util.ArrayList;
+
 /**
  * 
  * @author Sangeetha
@@ -9,8 +11,10 @@ package org.runextbus.com.model;
 
 public class Direction {
 	
-	public String tag;
-	public String title;
+	public String dirTitle;
+	public ArrayList<String> stopTag;
+	public ArrayList<String> stopTitle;
+	
 	
 	
 }
