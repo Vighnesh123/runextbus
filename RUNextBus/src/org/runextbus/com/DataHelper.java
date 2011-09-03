@@ -117,18 +117,18 @@ public List<String> populateRouteSpinner() {
       }
       //System.out.println(" I HAVE THIS DATA :" + list );
       return list;
-} // end of selectAll
-   
+} 
+  
+
 
 /**
  * selectAll1
- * @param null
- * @return list
- * @author Santosh Sriram 
+ * @param route and direction 
+ * @return stop list 
  */
-public List<String> populateStopSpinner(String RouteTitle) {
+public List<String> populateStopSpinner(String RouteTitle, String DirTitle ) {
               List<String> list = new ArrayList<String>();
-              Cursor cursor = this.db.rawQuery("SELECT DISTINCT StopTitle FROM "+TABLE_NAME+" WHERE RouteTitle = ('" + RouteTitle + "');", null);
+              Cursor cursor = this.db.rawQuery("SELECT DISTINCT StopTitle FROM "+TABLE_NAME+" WHERE RouteTitle = ('" + RouteTitle + "') and DirTitle = ('" + DirTitle + "');", null);
               if (cursor.moveToFirst()) {
               do {
                     list.add(cursor.getString(0));
@@ -141,6 +141,24 @@ public List<String> populateStopSpinner(String RouteTitle) {
               
 } // end of populateStopSpinner
    
+
+
+
+
+public List<String> populateDirSpinner(String RouteTitle) {
+    List<String> list = new ArrayList<String>();
+    Cursor cursor = this.db.rawQuery("SELECT DISTINCT DirTitle FROM "+TABLE_NAME+" WHERE RouteTitle = ('" + RouteTitle + "');", null);
+    if (cursor.moveToFirst()) {
+    do {
+          list.add(cursor.getString(0));
+       } while (cursor.moveToNext());
+    }
+    if (cursor != null && !cursor.isClosed()) {
+       cursor.close();
+    }
+    return list;
+    
+} // end of populateStopSpinner
 
 /**
  * Class OpenHelper 
@@ -232,8 +250,8 @@ public List<String> getStopTag(String RouteTitle,String StopTitle) {
  */
 
 public void insertAll(ArrayList<String> stopTitle, Object rtag,Object rtitle,ArrayList<String> stopTag,String dirTag,String dirTitle){
-        System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-        System.out.println("::::::::::::"+ stopTag.size()+":::::"+stopTitle.size()+":::::");
+       // System.out.println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+        //System.out.println("::::::::::::"+ stopTag.size()+":::::"+stopTitle.size()+":::::");
        
         Object stitle[] = stopTitle.toArray();
         Object stag[]=stopTag.toArray();
@@ -241,12 +259,12 @@ public void insertAll(ArrayList<String> stopTitle, Object rtag,Object rtitle,Arr
                 //for(int i=0;i<stitle.length&stitle[i]!=null;i++)
                 	for(int i=0;i<stopTitle.size()-1&stitle[i]!=null;i++)
                 {
-                	System.out.println( stitle[i] + "','" + rtag + "','" + rtitle + "','" + stag[i] + "','"+ dirTag +"','" + dirTitle);
+                	//System.out.println( stitle[i] + "','" + rtag + "','" + rtitle + "','" + stag[i] + "','"+ dirTag +"','" + dirTitle);
                                 db.execSQL("INSERT INTO "+TABLE_NAME+"(StopTitle,RouteTag,RouteTitle,StopTag,DirTag,DirTitle) Values ('" + stitle[i] + "','" + rtag + "','" + rtitle + "','" + stag[i] + "','"+ dirTag +"','" + dirTitle + "');");
                       
                 }
                 
-                System.out.println("DONE");
+                //System.out.println("DONE");
                 
 }// end of insertAll
 

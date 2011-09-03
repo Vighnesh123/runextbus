@@ -10,7 +10,9 @@ public class Global {
 	public static String s;
 	public static int fav=0;	
 	public static String route;
+	public static String direction;
 	public static String stop;
+	
 	
 	//for neareststop class
 	public static String closeStop;
