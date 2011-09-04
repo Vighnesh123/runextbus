@@ -36,39 +36,37 @@ import android.widget.Toast;
 
 
 public class GetPrediction extends ListActivity implements OnClickListener  {
-        
-    //public static SQLiteDatabase db;
-    
-    Button ButtonFavorite;
-    CheckBox ButtonCheck;
+     
+	/* local variables*/
     String localDirection;
     String localStop;
     String localRoute;
     
     
-    TextView txt;
+    
     ServerInterface sobj =  new ServerInterface();
     XmlParser xobj= new XmlParser();
     private DataHelper dbobj;
     
-    public ArrayAdapter<String> spinnerArrayAdapter3; 
     
-    //variables used by spinners 
-    public static Spinner spinner1 = null;
+    
+    /* User Interface variables */
+    Button ButtonFavorite;
+    CheckBox ButtonCheck;
+    TextView txt;
     public ArrayAdapter<String> spinnerArrayAdapter1;
-   
+    public ArrayAdapter<String> spinnerArrayAdapter3; 
+    public static Spinner spinner1 = null;
     public static Spinner spinner2 = null;
     public static Spinner spinner3 = null;
-    
-    public Activity myAct;
+     public Activity myAct;
     public List<String> stopList = new ArrayList<String>();
     public List<String> dirList = new ArrayList<String>();
     public List<String> routeList = new ArrayList<String>();
-   
-        // variables used by List view for favorite prediction 
     private List<String> lv_arr=new ArrayList<String>();
     public List<String> routeFavList = new ArrayList<String>();
     public List<String> stopFavList = new ArrayList<String>();
+    public List<String> dirFavList = new ArrayList<String>();
     public List<String> someList = new ArrayList<String>();
     public static ArrayAdapter<String> adapter=null;
     public CharSequence[] _options;
@@ -83,26 +81,23 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
     public String DirTitle;
     public String sproute;
     public String spstop;
+    public String spdirection;
     public ArrayList<String> stopTag = new ArrayList<String>();
 	public ArrayList<String> stopTitle = new ArrayList<String>();
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
+   
+	@Override
+   public void onCreate(Bundle savedInstanceState) {
     
         super.onCreate(savedInstanceState);
         setContentView(R.layout.newmain);
         this.dbobj=new DataHelper(this);
-        
-        //activity
         myAct=this;
   
     /* For Database to be synced with nextbus.com enable this*/
      deleteDb();
-    startUp(); 
-    
-    //for the first time call this to set the favorite predictions 
-    
-        
-        //spinners for route and stop selection 
+     startUp(); 
+   
+     //spinners for route and stop selection 
         spinner1 = (Spinner)this.findViewById(R.id.SpinnerRoute);
         spinner2 = (Spinner)this.findViewById(R.id.SpinnerStop);
         spinner3 = (Spinner)this.findViewById(R.id.SpinnerDir);
@@ -118,17 +113,11 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
        
        spinner1.setAdapter(this.spinnerArrayAdapter1);
        spinner1.setOnItemSelectedListener(new MyOnItemSelectedListener2());
+     
+       ButtonFavorite=(Button)findViewById(R.id.ButtonFavorite);
+       ButtonFavorite.setOnClickListener(this);
        
-      
-       //spinner3.setOnItemSelectedListener(new MyOnItemSelectedListener());
-       
-                     
-            ButtonFavorite=(Button)findViewById(R.id.ButtonFavorite);
-            ButtonFavorite.setOnClickListener(this);
-            
-        
-        
-        progressBar = (ProgressBar) findViewById(R.id.progressbar);
+       progressBar = (ProgressBar) findViewById(R.id.progressbar);
         
         //---do some work in background thread---
         new Thread(new Runnable() 
@@ -192,13 +181,8 @@ public class MyOnItemSelectedListener2 implements OnItemSelectedListener{
 	public ArrayAdapter<String> spinnerArrayAdapter3;
             
             public void onItemSelected(AdapterView<?> parent,View view, int pos, long id) {
-        
-//          Toast.makeText(parent.getContext(), "Route Selected : " +parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
             	String RouteTitle = parent.getItemAtPosition(pos).toString();
-            	
                 dirList= dbobj.populateDirSpinner(RouteTitle);
-//                dirList.add(0,"DIRECTION");
-           
                    spinnerArrayAdapter3 = new ArrayAdapter<String>(myAct, android.R.layout.simple_spinner_item, dirList);
                    spinnerArrayAdapter3.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
                    spinner3.setAdapter(spinnerArrayAdapter3);
@@ -209,77 +193,34 @@ public class MyOnItemSelectedListener2 implements OnItemSelectedListener{
                    
                       localRoute=(String)spinner1.getSelectedItem();
                      
-                   
-                   /*spinner3.setOnItemSelectedListener(new OnItemSelectedListener()
-
-                  { 
-                      public void onItemSelected(AdapterView<?> arg0,View view, int pos, long id) {
-                                       
-                       DirTitle = arg0.getItemAtPosition(pos).toString();
-                       
-                     //  if(DirTitle!="DIRECTION"){
-                        localDirection=(String) spinner3 .getSelectedItem();
-                        localRoute=(String)spinner1.getSelectedItem();
-                       
-                         //ButtonFavorite.setEnabled(false);
-                                                     
-                       // }
-                      }
-                      
-                         public void onNothingSelected(AdapterView parent) {                          
-                          // TODO Auto-generated method stub
-                      
-                         }
-                      
-                              });*/
                        
                    }
 
-
-                   private class MySpinnerAdapter extends ArrayAdapter{
-
-                   public MySpinnerAdapter(Context context, int resource, int textViewResourceId, List<String> objects) {
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// TODO Auto-generated method stub
+				
+			}
                    
-                       super(context, resource, textViewResourceId, objects);
-                       
-                       System.out.println("Inside Myspinner adapter :"+ objects.get(0));
-                       
-                       
-                   }    
-                       
-              }
-
-    /*
-     * first spinner  
-     *  (non-Javadoc)
-     * @see android.widget.AdapterView.OnItemSelectedListener#onNothingSelected(android.widget.AdapterView)
-     */
-                public void onNothingSelected(AdapterView parent) {
-                  // Do nothing
-                }
-            } // end of class for direction spinner  
+  } // end of class for direction spinner  
 
         
  /*
   * Support for spinner 2   
-  * @author Sangeetha
-  *
   */
  
 public class MyOnItemSelectedListener implements OnItemSelectedListener{
         
-        public ArrayAdapter<String> spinnerArrayAdapter2;
+   public ArrayAdapter<String> spinnerArrayAdapter2;
      
    public void onItemSelected(AdapterView<?> parent,View view, int pos, long id) {
         
       System.out.println("::::::::::::: Stop ::::::::::::: ");	
       localDirection = parent.getItemAtPosition(pos).toString();
-      Toast.makeText(parent.getContext(), "Route/Direction Selected : " +localRoute+"/"+localDirection, Toast.LENGTH_LONG).show();
-                //on selection of direction check direction and route to get stops
-                
-                stopList=dbobj.populateStopSpinner(localRoute,localDirection);
-                
-                stopList.add(0,"PICK STOP");
+      //Toast.makeText(parent.getContext(), "Route/Direction Selected : " +localRoute+"/"+localDirection, Toast.LENGTH_LONG).show();
+        
+      stopList=dbobj.populateStopSpinner(localRoute,localDirection);
+      stopList.add(0,"PICK STOP");
                 // use the stopListvalue to populate spinner                    
                         
                 MySpinnerAdapter spinnerArray = new MySpinnerAdapter(myAct,R.layout.custom_spinner_row,R.id.text, stopList);
@@ -294,14 +235,17 @@ public class MyOnItemSelectedListener implements OnItemSelectedListener{
                     
                     if(StopTitle!="PICK STOP"){
                     	
-                    Global.route = (String)spinner1.getSelectedItem();
-                       //Global.stop=(String)spinner2.getSelectedItem();
-                   
-                    Global.stop=StopTitle;
-                                ButtonFavorite.setEnabled(false);
+                    //Global.route = (String)spinner1.getSelectedItem();
+                      
+                    	//Global.stop=(String)spinner2.getSelectedItem();
+                   Global.route= localRoute;
+                   Global.direction= localDirection;
+                   Global.stop=StopTitle;
+                    
+                  ButtonFavorite.setEnabled(false);
                                 try{
-                                startPrediction(Global.route,Global.stop);
-                                System.out.println("Going inside the dialog now !");
+                                startPrediction(Global.route,Global.stop,Global.direction);
+                                
                                 }
                                 	catch (Exception e) {
                                 		lv_arr.clear();
@@ -359,6 +303,8 @@ public void onListItemClick(ListView parent, View v,int position, long id)
    routeFavList=dbobj.getFavRoute();       
    stopFavList=dbobj.getFavStop();
    
+   //dir
+   
    if(routeFavList.size()==0){
        lv_arr.clear();
        lv_arr.add("No current Favorites");
@@ -370,7 +316,7 @@ public void onListItemClick(ListView parent, View v,int position, long id)
    ArrayList<String> fTime =new ArrayList<String>();
    fTime.clear();
    
-   fTime = getTime(routeFavList.get(i),stopFavList.get(i)); 
+   fTime = getTime(routeFavList.get(i),stopFavList.get(i),dirFavList.get(i)); 
         
         if(fTime.size()==0){
                 lv_arr.remove(i);
@@ -432,6 +378,8 @@ public int setListAdapterMy(){
             
             routeFavList=dbobj.getFavRoute();       
             stopFavList=dbobj.getFavStop();
+            stopFavList=dbobj.getFavDir();
+            
             lv_arr.clear();
             
             ArrayList<String> favTime = new ArrayList<String>();
@@ -453,7 +401,7 @@ public int setListAdapterMy(){
             
                         favTime.clear();        
                         try{
-                                        favTime = getTime(routeFavList.get(0),stopFavList.get(0)); 
+                              favTime = getTime(routeFavList.get(0),stopFavList.get(0),dirFavList.get(0)); 
                         if(favTime.size()==0){
                           lv_arr.add(routeFavList.get(0)+" at "+ stopFavList.get(0)+" :\n No Prediction");
                         }
@@ -489,7 +437,7 @@ public int setListAdapterMy(){
                 //try getting the prediction times and catch exception if not 
                 try{
                 	
-                favTime = getTime(routeFavList.get(i),stopFavList.get(i));
+                favTime = getTime(routeFavList.get(i),stopFavList.get(i),dirFavList.get(0));
                 
                 if(favTime.size()==0){
                        lv_arr.add(routeFavList.get(i)+" - "+ stopFavList.get(i)+" :\n No Prediction");
@@ -525,10 +473,11 @@ public int setListAdapterMy(){
  * startPrediction : To provide prediction time for new Route and Stop from Spinners
  */
 
-void startPrediction(String r, String s){	
+void startPrediction(String r, String s, String d){	
 
 sproute=r;
 spstop=s;
+spdirection=d;
 	
 final ProgressDialog dialog = ProgressDialog.show(myAct,"", "Loading. Please wait...", true);
     
@@ -543,7 +492,7 @@ final ProgressDialog dialog = ProgressDialog.show(myAct,"", "Loading. Please wai
 		public void run() {
 		   System.out.println("Inside the dialog !!");
 		  try{
-		   Global.time=getTime(sproute,spstop);
+		   Global.time=getTime(sproute,spstop,spdirection);
 		   if(Global.time.size()!=0){
 			   Intent i=new Intent(myAct,ShowTime.class);
 			   startActivity(i);		   
@@ -570,20 +519,21 @@ final ProgressDialog dialog = ProgressDialog.show(myAct,"", "Loading. Please wai
  * getTime : Pass the route and stop Title to get the new prediction 
  * internally called by startPrediction
  */
-public ArrayList<String> getTime(String route, String stop){
+public ArrayList<String> getTime(String route, String stop, String direction){
 
 ArrayList<String>time= new ArrayList<String>();
 List<String> listRTag = new ArrayList<String>();
 List<String> listSTag = new ArrayList<String>();
-
+List<String> listDTag = new ArrayList<String>();
 //get the route and stp tags for api url 
 listRTag=dbobj.getRouteTag(route);
 listSTag=dbobj.getStopTag(route,stop);
+listDTag=dbobj.getDirTag(route,stop);
 
 String timeUrl=null; 
 String timeXml =null;
 
-timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&s="+listSTag.get(0)+"&r="+listRTag.get(0);
+timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&s="+listSTag.get(0)+"&r="+listRTag.get(0)+"&d="+listDTag.get(0);
 
 timeXml=sobj.retrieve(timeUrl);
 

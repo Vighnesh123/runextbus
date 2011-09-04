@@ -216,9 +216,6 @@ public List<String> getRouteTag(String RouteTitle) {
 
 /**
  * getStopTag : Used to get the tag corresponding to Stop Title selected
- * @param StopTitle
- * @return Tag list
- * @author Santosh Sriram 
  */
 
 public List<String> getStopTag(String RouteTitle,String StopTitle) {
@@ -240,6 +237,27 @@ public List<String> getStopTag(String RouteTitle,String StopTitle) {
               
 }// end of getStopTag
 
+
+
+
+public List<String> getDirTag(String RouteTitle,String StopTitle) {
+        // TODO Auto-generated method stub
+    List<String> list = new ArrayList<String>();
+    Cursor cursor;
+    
+        cursor=db.rawQuery("SELECT DISTINCT DirTag FROM "+ TABLE_NAME +" WHERE RouteTitle = ('" + RouteTitle + "') AND StopTitle = ('" + StopTitle + "')", null);       
+        
+        if (cursor.moveToFirst()) {
+              do {
+                    list.add(cursor.getString(0));
+                 } while (cursor.moveToNext());
+              }
+              if (cursor != null && !cursor.isClosed()) {
+                 cursor.close();
+              }
+              return list;
+              
+}// end of getDirTag
 
 
 /**
@@ -519,6 +537,29 @@ if (cursor != null && !cursor.isClosed()) {
 }
 return list;
 }
+
+
+
+
+public List<String> getFavDir() {
+    // TODO Auto-generated method stub
+    
+    //    System.out.println("Inside the getFavorite function....\n");
+List<String> list = new ArrayList<String>();
+    Cursor cursor =db.rawQuery("SELECT DirTitle from "+TABLE_NAME+" Where FavStatus='"+1+"'", null);
+
+if (cursor.moveToFirst()) {
+        
+do {
+      list.add(cursor.getString(0));
+} while (cursor.moveToNext());
+}
+if (cursor != null && !cursor.isClosed()) {
+   cursor.close();
+}
+return list;
+} 
+
 
 
 
