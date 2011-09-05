@@ -33,7 +33,7 @@ android:gravity="center"
     android:weightSum="1" android:layout_height="match_parent">
     <LinearLayout android:layout_marginTop="5dip" android:background="#333333" android:orientation="horizontal" android:textSize="14sp" android:layout_height="101dp" android:layout_width="273dp">
         <ProgressBar android:layout_width="wrap_content" android:id="@+id/progressbar" android:layout_height="wrap_content"></ProgressBar>
-        <ListView android:dividerHeight="1px" android:id="@+id/android:list" android:layout_height="match_parent" android:layout_width="247dp"></ListView>
+        <ListView android:dividerHeight="1px" android:layout_width="266dp" android:layout_height="match_parent" android:layout_weight="1" android:id="@+id/android:list"></ListView>
     </LinearLayout>
     <Button android:textStyle="bold" android:textSize="18sp" android:id="@+id/ButtonFavorite" android:paddingRight="20px" android:text="MORE FAVORITES" android:gravity="center" android:layout_width="280dp" android:layout_marginTop="5dip" android:layout_height="wrap_content"></Button>
                      

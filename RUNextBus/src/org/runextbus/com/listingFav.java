@@ -25,6 +25,8 @@ public class listingFav extends ListActivity implements OnClickListener
 	  public List<String> someList = new ArrayList<String>();
 	  public List<String> routeList = new ArrayList<String>();
 	  public List<String> stopList = new ArrayList<String>();
+	  public List<String> dirList = new ArrayList<String>();
+	  
 	  Button ManageButton;
 	public  ArrayAdapter<String> adapter;
 	private DataHelper dbobj;
@@ -55,6 +57,7 @@ public class listingFav extends ListActivity implements OnClickListener
 	   //get the list of all routes and stops that are marked favorites 
 	   routeList=dbobj.getFavRoute();	    
 	    stopList=dbobj.getFavStop();
+	    dirList=dbobj.getFavDir();
 	    
 	    if(routeList.size()==0){
 	    	//show no favorites in case list is empty 
@@ -109,11 +112,18 @@ public class listingFav extends ListActivity implements OnClickListener
     	    List<String> listStopTag = new ArrayList<String>();
     	    listStopTag=dbobj.getStopTag(routeList.get(option),stopList.get(option));
     	    Global.stopTag = listStopTag.get(0);
+    	    
+    	    List<String> listDirTag = new ArrayList<String>();
+    	    listDirTag=dbobj.getDirTag(routeList.get(option),stopList.get(option));
+    	    Global.dirTag = listDirTag.get(0);
 
     	 Global.favRouteTag=Global.routeTag;
     	 Global.favRoute=routeList.get(option);
     	 Global.favStopTag=Global.stopTag;
     	 Global.favStop=stopList.get(option);
+    	 Global.favDirTag=Global.dirTag;
+    	 Global.favDir= dirList.get(option);
+    	 
     	 
     	 Intent i=new Intent(this,FavPrediction.class);
     	 startActivity(i);
@@ -201,7 +211,9 @@ public class listingFav extends ListActivity implements OnClickListener
     protected void onStart() {
         super.onStart();
       routeList.clear();
-      stopList.clear( );
+      stopList.clear();
+      dirList.clear();
+      
       lv_arr.clear();
       
        manage=manage+1;//the version of dialog view 
