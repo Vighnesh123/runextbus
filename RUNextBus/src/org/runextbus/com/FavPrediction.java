@@ -24,6 +24,7 @@ public class FavPrediction extends Activity implements OnClickListener {
  private TextView output;
  String r;
  String s;
+ String d;
  String timeUrl;
 
  
@@ -33,19 +34,20 @@ public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
 	 setContentView(R.layout.showfavtime);
 		
-	 getFavTime(Global.favRouteTag,Global.favRoute,Global.favStopTag,Global.favStop);
+	 getFavTime(Global.favRouteTag,Global.favRoute,Global.favStopTag,Global.favStop,Global.favDirTag,Global.favDir);
 	 
  }
  
 
- void getFavTime(String favrTag, String favrTitle, String favsTag, String favsTitle){
+ void getFavTime(String favrTag, String favrTitle, String favsTag, String favsTitle,String favdTag , String favdTitle){
 
-	 String timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+favrTag+"&s="+favsTag;
+	 String timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+favrTag+"&s="+favsTag+"&d="+favdTag;
 	 timeXml = sobj.retrieve(timeUrl);
 	 
 	 
-	 System.out.println("RouteTag : "+favrTag+"\n");
-	 System.out.println("StopTag : "+favsTag+"\n");
+	 /*System.out.println("RouteTag : "+favrTag+"\n");
+	 System.out.println("StopTag : "+favsTag+"\n");*/
+	 
 	 ArrayList<String> timeMinutes = xobj.parseTimeResponse(timeXml);
 	  
 	  int count = timeMinutes.size();
@@ -147,7 +149,7 @@ public void onClick(View v) {
 	    		case R.id.ButtonUpdate:
 	    		// call update with database returned values
 	    				
-	    		updateTime(Global.favRouteTag,Global.favStopTag); 
+	    		updateTime(Global.favRouteTag,Global.favStopTag,Global.favDirTag); 
 	    		break;
 
 	    		}// end of case statements
@@ -155,11 +157,12 @@ public void onClick(View v) {
 }//end of onClick
 
 
-public void updateTime(String route, String stop){
+public void updateTime(String route, String stop,String dir){
 
 	
 	r=route;
 	s=stop;
+	d=dir;
 	
 	
    /** All the URL's for invoking API on nextBus.com 
@@ -179,7 +182,7 @@ public void updateTime(String route, String stop){
 
 try{*/
 
-   timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+r+"&s="+s;
+   timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+r+"&s="+s+"&d"+d;
 
   /*}
 catch (Exception e) {

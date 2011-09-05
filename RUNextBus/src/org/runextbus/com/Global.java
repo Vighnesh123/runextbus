@@ -21,12 +21,15 @@ public class Global {
 	public static ArrayList<String> stopList;
 	public static String favRoute=null;;
 	public static String favStop=null;
+	public static String favDir=null;
 	public static String routeTag;
 	public static String stopTag;
+	public static String dirTag;
 	public static String temprouteTag;
 	public static String tempstopTag;
 	public static String favRouteTag;
 	public static String favStopTag;
+	public static String favDirTag;
 
 	
 

@@ -25,19 +25,10 @@ android:gravity="center"
 </LinearLayout>
 
   <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="440px"
-        android:layout_weight="0.1"
-        >   
-
-        <ListView android:id="@+id/android:list"
-        android:layout_width="fill_parent" 
-        android:layout_height="440px" 
-        android:dividerHeight="2px"
-         android:textStyle="bold"
-        android:textSize="18sp">
-                 </ListView>
+        android:layout_weight="0.1" android:orientation="vertical">
+      <ListView android:dividerHeight="2px" android:id="@+id/android:list" android:layout_height="match_parent" android:layout_width="285dp" android:layout_gravity="center_horizontal"></ListView>
                    
     </LinearLayout> 
 
@@ -47,20 +38,8 @@ android:gravity="center"
     android:layout_width="fill_parent"
     android:layout_height="60px" 
     android:gravity="center"
-    > 
-
-
-                <Button                      
-                     android:id="@+id/ManageButton"
-                     android:layout_width="280px"
-                     android:layout_height="wrap_content"
-                     android:layout_alignParentRight="true"
-                     android:paddingRight="20px"
-                     android:gravity="center"
-                     android:text="MANAGE FAVORITES"
-                     android:textStyle="bold"
-                     android:textSize="18sp"
-                     />
+    >
+    <Button android:gravity="center" android:text="MANAGE FAVORITES" android:textSize="18sp" android:paddingRight="20px" android:layout_height="wrap_content" android:layout_width="261dp" android:textStyle="bold" android:id="@+id/ManageButton"></Button>
 
 </LinearLayout>
 </LinearLayout>

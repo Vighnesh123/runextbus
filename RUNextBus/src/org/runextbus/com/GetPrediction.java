@@ -1,6 +1,9 @@
 package org.runextbus.com;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +16,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.format.Time;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -302,6 +306,7 @@ public void onListItemClick(ListView parent, View v,int position, long id)
            int i=position;      
    routeFavList=dbobj.getFavRoute();       
    stopFavList=dbobj.getFavStop();
+   dirFavList=dbobj.getFavDir();
    
    //dir
    
@@ -378,7 +383,7 @@ public int setListAdapterMy(){
             
             routeFavList=dbobj.getFavRoute();       
             stopFavList=dbobj.getFavStop();
-            stopFavList=dbobj.getFavDir();
+            dirFavList=dbobj.getFavDir();
             
             lv_arr.clear();
             
@@ -512,6 +517,7 @@ final ProgressDialog dialog = ProgressDialog.show(myAct,"", "Loading. Please wai
 			
 						handler.sendEmptyMessage(0);
 	      }
+		
 	   };checkUpdate.start();
 
 } // end of startPrediction
@@ -521,6 +527,19 @@ final ProgressDialog dialog = ProgressDialog.show(myAct,"", "Loading. Please wai
  */
 public ArrayList<String> getTime(String route, String stop, String direction){
 
+	String currentDateTimeString = DateFormat.getDateInstance().format(new Date());
+	
+	
+	Date anotherCurDate = new Date();
+	SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMM d 'at' hh:mm a 'in the year' yyyy G");
+	String formattedDateString = formatter.format(anotherCurDate);  
+	
+	
+	System.out.println("Formatted Date Time ::::::::"+formattedDateString);
+	
+	// textView is the TextView view that should disp lay it
+	//textView.setText(currentDateTimeString);
+	System.out.println("Current Time :::::::::::::::::::::::::"+currentDateTimeString);
 ArrayList<String>time= new ArrayList<String>();
 List<String> listRTag = new ArrayList<String>();
 List<String> listSTag = new ArrayList<String>();
@@ -558,6 +577,20 @@ void predictionError(){
 * UNUSED CODE - 
 * When the routes change -> change the database and sync with next bus database...
 */
+
+
+@Override
+protected void onRestart() {
+    super.onRestart();
+    
+    // when the activity is re-started : When activity comes to foreground perform this
+    ButtonFavorite.setEnabled(true);
+    lv_arr.clear();
+    setListAdapterMy();
+    adapter.notifyDataSetChanged();
+}
+
+
 
 
 void deleteDb(){
