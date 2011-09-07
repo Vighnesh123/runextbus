@@ -118,10 +118,12 @@ public class listingFav extends ListActivity implements OnClickListener
    private RowModel getModel(int position) {
 	    return(((RatingAdapter)getListAdapter()).getItem(position));
 	  }
+   
 	class RatingAdapter extends ArrayAdapter<RowModel> {
 	    RatingAdapter(ArrayList<RowModel> list) {
 	      super(listingFav.this, R.layout.rating_list_item, R.id.label, list);
 	    }
+	    
 	public View getView(int position, View convertView,ViewGroup parent) {
 	      View row=super.getView(position, convertView, parent);
 	      ViewHolder holder=(ViewHolder)row.getTag();
@@ -160,20 +162,16 @@ public class listingFav extends ListActivity implements OnClickListener
 	     
 	return(row);
 	    }
-	  }
+	  } 
    
-   
-   
-   
-   
-   
- 
-    public void onListItemClick(ListView parent, View v,int position, long id) 
+	
+//public void onListItemClick(ListView parent, View v,int position, long id)
+	public void onListItemClick(ViewGroup parent, View convertView,int position, long id) 
     {   
         //Toast.makeText(this, "You have selected " + lv_arr.get(position),Toast.LENGTH_SHORT).show();
         int i=position+1;
         System.out.println("THE NUMBER SELECTED IS "+i);
-        favPrediction(i-1);
+        //favPrediction(i-1);
         
     }
     
