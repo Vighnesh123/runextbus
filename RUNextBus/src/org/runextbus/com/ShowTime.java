@@ -122,19 +122,23 @@ public void onClick(View v) {
 			List<String> routeTag=dbobj1.getRouteTag(rr);
 
 			List<String> stopTag=dbobj1.getStopTag(rr,ss);
+			List<String> dirTag=dbobj1.getDirTag(rr,ss);
+			
 			
 			Global.temprouteTag=routeTag.get(0);
 			Global.tempstopTag=stopTag.get(0);
-			
+			Global.tempdirTag=dirTag.get(0);
+		
 			System.out.println("R and S:"+Global.tempstopTag+":"+Global.tempstopTag);
 			
-			updateTime(Global.temprouteTag, Global.tempstopTag);
+			updateTime(Global.temprouteTag, Global.tempstopTag,Global.tempdirTag);
 			break;		
 	
 		case R.id.ButtonCheck:
 	 if (((CheckBox) v).isChecked()) {      
          //   System.out.println("MARKING AS FAVORITE \n");
-         dbobj1.addFav(Global.route,Global.stop);   
+ 
+         dbobj1.addFav(Global.route,Global.stop,Global.direction);   
     	Toast.makeText(ShowTime.this, "MARKED AS FAVORITE", Toast.LENGTH_SHORT).show();
 	 
 	 }
@@ -149,12 +153,12 @@ public void onClick(View v) {
  * @param stop
  */
 
-public void updateTime(String route, String stop){
+public void updateTime(String route, String stop,String dir ){
 
    /** All the URL's for invoking API on nextBus.com 
  	*	Make http request with stop and route given*/
     
-  String timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+route+"&s="+stop;
+  String timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+route+"&s="+stop+"&d="+dir;
   timeXml = sobj.retrieve(timeUrl);
   ArrayList<String> timeMinutes = xobj.parseTimeResponse(timeXml);
   int count = timeMinutes.size();

@@ -7,16 +7,23 @@ import java.util.List;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity; 
 import android.content.DialogInterface;
 import android.content.Intent;
 import org.runextbus.com.GetPrediction;
+import org.runextbus.com.listingFavRate.RatingAdapter;
+import org.runextbus.com.listingFavRate.RowModel;
+import org.runextbus.com.listingFavRate.ViewHolder;
 
 public class listingFav extends ListActivity implements OnClickListener 
 {
@@ -35,6 +42,8 @@ public class listingFav extends ListActivity implements OnClickListener
 	public GetPrediction gpObj;	
 	public int manage=0;
 	
+	
+	
     @Override  
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -42,7 +51,7 @@ public class listingFav extends ListActivity implements OnClickListener
     	this.dbobj=new DataHelper(this);
         super.onCreate(savedInstanceState);  
         setContentView(R.layout.screen02);
-          
+        //setContentView(R.layout.rating);
     	
         ManageButton=(Button)findViewById(R.id.ManageButton);
     	ManageButton.setOnClickListener((OnClickListener) this);
@@ -62,8 +71,17 @@ public class listingFav extends ListActivity implements OnClickListener
 	    if(routeList.size()==0){
 	    	//show no favorites in case list is empty 
 	    	lv_arr.add("No current Favorites");
-	    	adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr);
-			setListAdapter(adapter);	   
+	    	
+	    	ArrayList<RowModel> list=new ArrayList<RowModel>();
+	    	for (String s : lv_arr) {
+	    	      list.add(new RowModel(s));
+	    	    }
+	    	setListAdapter(new RatingAdapter(list));
+	    	
+	    	//adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr);
+	    	//adapter=new ArrayAdapter<String>(this,R.layout.list_item,lv_arr);
+	    	
+			//setListAdapter(adapter);	   
 			
 	    }
 	    
@@ -77,15 +95,78 @@ public class listingFav extends ListActivity implements OnClickListener
 		for (int i=0;i<routeList.size();i++){
 		lv_arr.add(routeList.get(i)+" "+ stopList.get(i));
 		}
+		
+		
       
 		_options = lv_arr.toArray(new CharSequence[lv_arr.size()]);
 		_selections= new boolean[ _options.length];
-		 adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr);
-		 setListAdapter(adapter);
+		 //adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr);
+		ArrayList<RowModel> list=new ArrayList<RowModel>();
+    	for (String s : lv_arr) {
+    	      list.add(new RowModel(s));
+    	    }
+    	setListAdapter(new RatingAdapter(list));
+		
+		//adapter=new ArrayAdapter<String>(this, R.layout.list_item,lv_arr);
+		 //setListAdapter(adapter);
 		 
 	    }
     }    // end of listCreation
     
+   
+   
+   private RowModel getModel(int position) {
+	    return(((RatingAdapter)getListAdapter()).getItem(position));
+	  }
+	class RatingAdapter extends ArrayAdapter<RowModel> {
+	    RatingAdapter(ArrayList<RowModel> list) {
+	      super(listingFav.this, R.layout.rating_list_item, R.id.label, list);
+	    }
+	public View getView(int position, View convertView,ViewGroup parent) {
+	      View row=super.getView(position, convertView, parent);
+	      ViewHolder holder=(ViewHolder)row.getTag();
+	                         
+	      if (holder==null) {    
+	        holder=new ViewHolder(row);
+	        row.setTag(holder);
+	        
+	        RatingBar.OnRatingBarChangeListener l=
+	                    new RatingBar.OnRatingBarChangeListener() {
+	          public void onRatingChanged(RatingBar ratingBar,
+	                                       float rating,
+	                                       boolean fromTouch)  {
+	            Integer myPosition=(Integer)ratingBar.getTag();
+	            RowModel model=getModel(myPosition);
+	            
+	            
+	            model.rating=rating;
+	     
+	            
+	            System.out.println("ROW IS ::::::::::::::::: " + myPosition);
+	            System.out.println("RATING IS ::::::::::::: "+ rating);
+	          
+	            LinearLayout parent=(LinearLayout)ratingBar.getParent();
+	            TextView label=(TextView)parent.findViewById(R.id.label);
+	        
+	            label.setText(model.toString());
+	          }
+	        };
+	        holder.rate.setOnRatingBarChangeListener(l);
+	      }
+	      RowModel model=getModel(position);
+	      
+	      holder.rate.setTag(new Integer(position));
+	      holder.rate.setRating(model.rating);
+	     
+	return(row);
+	    }
+	  }
+   
+   
+   
+   
+   
+   
  
     public void onListItemClick(ListView parent, View v,int position, long id) 
     {   
@@ -129,6 +210,14 @@ public class listingFav extends ListActivity implements OnClickListener
     	 startActivity(i);
     	   }
     }
+    
+    
+    class ViewHolder {
+		  RatingBar rate=null;
+		ViewHolder(View base) {
+		    this.rate=(RatingBar)base.findViewById(R.id.rate);
+		  }
+	}
 
     public void onClick(View p) {
     	// there is only button in this view
@@ -222,10 +311,22 @@ public class listingFav extends ListActivity implements OnClickListener
         
     }
 
+
+
+class RowModel {
+    String label;
+    float rating=2.0f;
+RowModel(String label) {
+      this.label=label;
+    }
+public String toString() {
+      if (rating==5.0) {
+        return(label.toUpperCase());
+      }
+return(label);
+    }
+  }
 }
-
-//end of class listingFav
-
 
 //********************************************UN USED******************************************//
 /* void refresh(){

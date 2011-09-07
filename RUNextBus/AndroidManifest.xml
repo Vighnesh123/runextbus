@@ -33,6 +33,13 @@
                   android:finishOnTaskLaunch="true">
                   
 		</activity>
+
+		<activity android:name=".listingFavRate"
+                  android:label="@string/second"
+                  android:finishOnTaskLaunch="true">
+                  
+		</activity>
+
 		
 		 <activity android:name=".FavPrediction"
                   android:label="@string/second"

@@ -367,6 +367,7 @@ public void onClick(View p) {
         
         case R.id.ButtonFavorite:               
                 Intent i=new Intent(this,listingFav.class);
+                //Intent i=new Intent(this,listingFavRate.class);
                 startActivity(i);
                 break;
                  
