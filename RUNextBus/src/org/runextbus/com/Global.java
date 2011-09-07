@@ -25,8 +25,12 @@ public class Global {
 	public static String routeTag;
 	public static String stopTag;
 	public static String dirTag;
+	
 	public static String temprouteTag;
 	public static String tempstopTag;
+	public static String tempdirTag;
+	
+	
 	public static String favRouteTag;
 	public static String favStopTag;
 	public static String favDirTag;

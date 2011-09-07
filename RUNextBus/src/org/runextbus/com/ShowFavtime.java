@@ -101,7 +101,7 @@ public void onClick(View v) {
 	// call update with database returned values
 	//change the Global.route and Global.stop values
 		
-			updateTime(Global.routeTag, Global.stopTag);
+			updateTime(Global.routeTag, Global.stopTag,Global.dirTag);
 			break;
 					
 			
@@ -115,12 +115,12 @@ public void onClick(View v) {
  * @param stop
  */
 
-public void updateTime(String route, String stop){
+public void updateTime(String route, String stop ,String direction){
 
    /** All the URL's for invoking API on nextBus.com 
  	*	Make http request with stop and route given*/
     
-  String timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+route+"&s="+stop;
+  String timeUrl = "https://www.cs.rutgers.edu/lcsr/research/nextbus/feed.php?command=predictions&a="+Global.agency+"&r="+route+"&s="+stop+"&d="+direction;
   timeXml = sobj.retrieve(timeUrl);
   ArrayList<String> timeMinutes = xobj.parseTimeResponse(timeXml);
   int count = timeMinutes.size();

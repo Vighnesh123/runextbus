@@ -478,12 +478,12 @@ public void insertFav(int i){
 
 //add the entry
 
-public void addFav(String rTitle,String sTitle){
+public void addFav(String rTitle,String sTitle, String dTitle){
         int flag=1;
         System.out.println(sTitle);
         System.out.println(rTitle);
         System.out.println("Adding Favorite with new function");
-db.execSQL("UPDATE "+TABLE_NAME+" SET FavStatus = '"+ flag +"' WHERE StopTitle= '"+ sTitle +"' and RouteTitle  ='"+ rTitle +"'");
+db.execSQL("UPDATE "+TABLE_NAME+" SET FavStatus = '"+ flag +"' WHERE StopTitle= '"+ sTitle +"' and RouteTitle  ='"+ rTitle +"'and DirTitle  ='"+ dTitle +"'");
                                                                               
         }// end of updateFavStatus
 
