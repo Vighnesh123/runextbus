@@ -3,10 +3,11 @@ package org.runextbus.com;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -21,13 +22,11 @@ import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import org.runextbus.com.GetPrediction;
-import org.runextbus.com.listingFavRate.RatingAdapter;
-import org.runextbus.com.listingFavRate.RowModel;
-import org.runextbus.com.listingFavRate.ViewHolder;
+
 
 public class listingFav extends ListActivity implements OnClickListener 
 {
-	
+	OnTouchListener tl;	
 	private List<String> lv_arr=new ArrayList<String>();
 	  public List<String> someList = new ArrayList<String>();
 	  public List<String> routeList = new ArrayList<String>();
@@ -41,6 +40,8 @@ public class listingFav extends ListActivity implements OnClickListener
 	public boolean[] _selections ;
 	public GetPrediction gpObj;	
 	public int manage=0;
+	
+	TextView labeld;
 	
 	
 	
@@ -77,7 +78,7 @@ public class listingFav extends ListActivity implements OnClickListener
 	    	      list.add(new RowModel(s));
 	    	    }
 	    	setListAdapter(new RatingAdapter(list));
-	    	
+	    	labeld = (TextView)findViewById(R.id.label);
 	    	//adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr);
 	    	//adapter=new ArrayAdapter<String>(this,R.layout.list_item,lv_arr);
 	    	
@@ -96,8 +97,6 @@ public class listingFav extends ListActivity implements OnClickListener
 		lv_arr.add(routeList.get(i)+" "+ stopList.get(i));
 		}
 		
-		
-      
 		_options = lv_arr.toArray(new CharSequence[lv_arr.size()]);
 		_selections= new boolean[ _options.length];
 		 //adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,lv_arr);
@@ -106,13 +105,21 @@ public class listingFav extends ListActivity implements OnClickListener
     	      list.add(new RowModel(s));
     	    }
     	setListAdapter(new RatingAdapter(list));
-		
+		labeld = (TextView)findViewById(R.id.label);
 		//adapter=new ArrayAdapter<String>(this, R.layout.list_item,lv_arr);
 		 //setListAdapter(adapter);
 		 
 	    }
     }    // end of listCreation
     
+   
+   
+ /*  public void onListItemClick(ListView parent, View v,
+           int position, long id) {
+	   labeld.setText(lv_arr.get(position));
+	   
+	   System.out.println("CLICKED OPTION ::::::::::::::::::"+position);
+   }*/
    
    
    private RowModel getModel(int position) {
@@ -124,17 +131,33 @@ public class listingFav extends ListActivity implements OnClickListener
 	      super(listingFav.this, R.layout.rating_list_item, R.id.label, list);
 	    }
 	    
+	    
+	    
+	    
 	public View getView(int position, View convertView,ViewGroup parent) {
+		
 	      View row=super.getView(position, convertView, parent);
+	      
 	      ViewHolder holder=(ViewHolder)row.getTag();
 	                         
+	      TextView label=(TextView)row.findViewById(R.id.label);
+	      
 	      if (holder==null) {    
-	        holder=new ViewHolder(row);
+	        
+	    	  // holder : View Holder ( rate / label)
+	    	  //lv_arr : rate(rating bar)/label (textview)
+	    	
+	    	  
+	    	holder=new ViewHolder(row);
+	        
+	        label.setText(lv_arr.get(position));
+	        
 	        row.setTag(holder);
 	        
-	        RatingBar.OnRatingBarChangeListener l=
-	                    new RatingBar.OnRatingBarChangeListener() {
-	          public void onRatingChanged(RatingBar ratingBar,
+	     	        
+	        RatingBar.OnRatingBarChangeListener l= new RatingBar.OnRatingBarChangeListener() {
+	          
+	        	public void onRatingChanged(RatingBar ratingBar,
 	                                       float rating,
 	                                       boolean fromTouch)  {
 	            Integer myPosition=(Integer)ratingBar.getTag();
@@ -142,31 +165,67 @@ public class listingFav extends ListActivity implements OnClickListener
 	            
 	            
 	            model.rating=rating;
-	     
+	            
 	            
 	            System.out.println("ROW IS ::::::::::::::::: " + myPosition);
 	            System.out.println("RATING IS ::::::::::::: "+ rating);
 	          
 	            LinearLayout parent=(LinearLayout)ratingBar.getParent();
 	            TextView label=(TextView)parent.findViewById(R.id.label);
-	        
+	            
 	            label.setText(model.toString());
 	          }
 	        };
+	        
+	        
+	        OnTouchListener tl= new OnTouchListener() {
+	            
+	        	@Override
+	    		public boolean onTouch(View v, MotionEvent event) {
+	        		//int X = (int)event.getX(),  Y = (int)event.getY();
+	        		TextView tv = (TextView)v;
+	        		ListView lv = (ListView)tv.getParent().getParent();
+	        		
+	        	System.out.println("Clicked :::::");
+	        		//int a = lv.pointToPosition(X, Y);
+	        		
+	        		Integer myPosition=(Integer)lv.getTag();
+	        		   System.out.println(":::::::::::"+lv_arr.indexOf(tv.getText()));
+	        		   
+	        		
+	    			// TODO Auto-generated method stub
+	    			return false;
+	    		}
+	        };
+	       
+	        holder.label.setOnTouchListener(tl);
 	        holder.rate.setOnRatingBarChangeListener(l);
+	        
 	      }
-	      RowModel model=getModel(position);
 	      
+	      RowModel model=getModel(position);
+	   
 	      holder.rate.setTag(new Integer(position));
 	      holder.rate.setRating(model.rating);
 	     
 	return(row);
 	    }
-	  } 
-   
+	
+      //holder.label.setOnClickListener();
+    
+  }
+  
+  /*RowModel model=getModel(position);
+  
+  holder.rate.setTag(new Integer(position));
+  holder.rate.setRating(model.rating);
+ 
+return(row);*/
+
 	
 //public void onListItemClick(ListView parent, View v,int position, long id)
-	public void onListItemClick(ViewGroup parent, View convertView,int position, long id) 
+	//public void onListItemClick(ViewGroup parent, View convertView,int position, long id)
+	public void onListItemClick(ListView parent, View convertView,int position, long id)
     {   
         //Toast.makeText(this, "You have selected " + lv_arr.get(position),Toast.LENGTH_SHORT).show();
         int i=position+1;
@@ -212,8 +271,10 @@ public class listingFav extends ListActivity implements OnClickListener
     
     class ViewHolder {
 		  RatingBar rate=null;
+		  TextView label = null;
 		ViewHolder(View base) {
 		    this.rate=(RatingBar)base.findViewById(R.id.rate);
+		    this.label=(TextView)base.findViewById(R.id.label);
 		  }
 	}
 
@@ -231,6 +292,9 @@ public class listingFav extends ListActivity implements OnClickListener
     		//show updated manage dialog 
     		showDialog(manage);	
     	 	break;
+    	 	
+    	case R.id.label:
+    		System.out.println("::::::::::::::::::::::: TEXTVIEW INVOKED");
     	}
         
     } // end of onclick for manage favoirtes button
