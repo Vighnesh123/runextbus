@@ -167,10 +167,20 @@ public HashMap<String,Direction> parseDirResponseTag(String xml) {
 		
 		return DirectionHandler.retrieveDirStop();
 	} 
-	catch (Exception e) {
-		e.printStackTrace();
+	
+	 catch(NullPointerException ex)
+	   {
+		   
+		   System.out.println("NULL POINTER EXCEPTION::::::::::::::::");
+			return null;
+		   // Exception handling code for the NullPointerException
+	   }
+
+	catch (Exception ex) {
+		ex.printStackTrace();
 		return null;
 	}
+
 
 }
 

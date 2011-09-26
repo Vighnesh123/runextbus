@@ -13,7 +13,7 @@ public class Global {
 	public static String direction;
 	public static String stop;
 	
-	
+	public static DataHelper dbobj;
 	//for neareststop class
 	public static String closeStop;
 	
