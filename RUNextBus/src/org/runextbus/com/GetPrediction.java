@@ -50,7 +50,7 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
     
     ServerInterface sobj =  new ServerInterface();
     XmlParser xobj= new XmlParser();
-    private DataHelper dbobj;
+    //private DataHelper dbobj;
     
     
     
@@ -94,7 +94,8 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
     
         super.onCreate(savedInstanceState);
         setContentView(R.layout.newmain);
-        this.dbobj=new DataHelper(this);
+        Global.dbobj=new DataHelper(this);
+        
         myAct=this;
   
     /* For Database to be synced with nextbus.com enable this*/
@@ -109,7 +110,7 @@ public class GetPrediction extends ListActivity implements OnClickListener  {
         
             /* First spinner value populated */
        
-       routeList= dbobj.populateRouteSpinner(); 
+       routeList= Global.dbobj.populateRouteSpinner(); 
        
      
        spinnerArrayAdapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, routeList);
@@ -186,7 +187,7 @@ public class MyOnItemSelectedListener2 implements OnItemSelectedListener{
             
             public void onItemSelected(AdapterView<?> parent,View view, int pos, long id) {
             	String RouteTitle = parent.getItemAtPosition(pos).toString();
-                dirList= dbobj.populateDirSpinner(RouteTitle);
+                dirList= Global.dbobj.populateDirSpinner(RouteTitle);
                    spinnerArrayAdapter3 = new ArrayAdapter<String>(myAct, android.R.layout.simple_spinner_item, dirList);
                    spinnerArrayAdapter3.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
                    spinner3.setAdapter(spinnerArrayAdapter3);
@@ -223,7 +224,7 @@ public class MyOnItemSelectedListener implements OnItemSelectedListener{
       localDirection = parent.getItemAtPosition(pos).toString();
       //Toast.makeText(parent.getContext(), "Route/Direction Selected : " +localRoute+"/"+localDirection, Toast.LENGTH_LONG).show();
         
-      stopList=dbobj.populateStopSpinner(localRoute,localDirection);
+      stopList=Global.dbobj.populateStopSpinner(localRoute,localDirection);
       stopList.add(0,"PICK STOP");
                 // use the stopListvalue to populate spinner                    
                         
@@ -304,9 +305,9 @@ public class MyOnItemSelectedListener implements OnItemSelectedListener{
 public void onListItemClick(ListView parent, View v,int position, long id) 
 {   
            int i=position;      
-   routeFavList=dbobj.getFavRoute();       
-   stopFavList=dbobj.getFavStop();
-   dirFavList=dbobj.getFavDir();
+   routeFavList=Global.dbobj.getFavRoute();       
+   stopFavList=Global.dbobj.getFavStop();
+   dirFavList=Global.dbobj.getFavDir();
    
    //dir
    
@@ -382,9 +383,9 @@ public void onClick(View p) {
 
 public int setListAdapterMy(){
             
-            routeFavList=dbobj.getFavRoute();       
-            stopFavList=dbobj.getFavStop();
-            dirFavList=dbobj.getFavDir();
+            routeFavList=Global.dbobj.getFavRoute();       
+            stopFavList=Global.dbobj.getFavStop();
+            dirFavList=Global.dbobj.getFavDir();
             
             lv_arr.clear();
             
@@ -546,9 +547,9 @@ List<String> listRTag = new ArrayList<String>();
 List<String> listSTag = new ArrayList<String>();
 List<String> listDTag = new ArrayList<String>();
 //get the route and stp tags for api url 
-listRTag=dbobj.getRouteTag(route);
-listSTag=dbobj.getStopTag(route,stop);
-listDTag=dbobj.getDirTag(route,stop);
+listRTag=Global.dbobj.getRouteTag(route);
+listSTag=Global.dbobj.getStopTag(route,stop);
+listDTag=Global.dbobj.getDirTag(route,stop);
 
 String timeUrl=null; 
 String timeXml =null;
@@ -592,12 +593,10 @@ protected void onRestart() {
 }
 
 
-
-
 void deleteDb(){
  
-this.dbobj.deleteAll(); // Delete data from the table RUData
-this.dbobj.deleteAll_fav(); // Delete data from the Fav table
+Global.dbobj.deleteAll(); // Delete data from the table RUData
+Global.dbobj.deleteAll_fav(); // Delete data from the Fav table
 
 }
 
@@ -666,7 +665,7 @@ void startUp(){
                                     // Put these in database  
                                     //Update RUData table with column
 								  System.out.println("TAG::: "+":::  "+i+"::: "+k1+" TITLE::::: "+k2+":::::::: "+ stopTag+"::::::"+stopTitle);
-                                  dbobj.insertAll(stopTitle,rTagPass[i],rTitlePass[i],stopTag,k1,k2);
+								  Global.dbobj.insertAll(stopTitle,rTagPass[i],rTitlePass[i],stopTag,k1,k2);
                                     
                                }
                                     

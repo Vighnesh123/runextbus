@@ -24,7 +24,7 @@ public class ServerInterface {
    private DefaultHttpClient client=new DefaultHttpClient();  
   
    //retrieve
-   public String retrieve(String url)    {
+   public String testretrieve(String url)    {
 	   String ret=null;
 	   System.out.println("Server Interface received: "+url);
 	   HttpGet getRequest ;
@@ -57,7 +57,6 @@ public class ServerInterface {
          
          if (getResponseEntity != null) {
         	 ret=EntityUtils.toString(getResponseEntity);
-        	 //System.out.println("XML IN SERVER INTERFACE  :"+ret);
         	getResponseEntity =null;
         	return ret;
          }
@@ -123,6 +122,25 @@ public class ServerInterface {
 	       }
 	   } // end of method
 
+   
+   
+   public String retrieve(String url){
+	   String abc = "nothing";
+	   
+	   try{
+		   abc= testretrieve(url);
+	   }
+	   
+	   catch(NullPointerException ex)
+	   {
+		   
+		   System.out.println("NULL POINTER EXCEPTION::::::::::::::::");
+	     // Exception handling code for the NullPointerException
+	   }
+	   
+	   return abc;
+   }
+   
 
 }
 

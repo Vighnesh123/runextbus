@@ -31,6 +31,7 @@ public class DataHelper{
            private Context context;
          
            public SQLiteDatabase db;
+           OpenHelper openHelper;
            //private SQLiteStatement insertStmt;
            
 /**
@@ -39,7 +40,7 @@ public class DataHelper{
  */
 public DataHelper(Context context) {
               this.context = context;
-              DataBaseHelper obj=new DataBaseHelper(this.context);
+             // DataBaseHelper obj=new DataBaseHelper(this.context);
               
              OpenHelper openHelper = new OpenHelper(this.context);
               this.db = openHelper.getWritableDatabase();
@@ -480,10 +481,11 @@ public void insertFav(int i){
 
 public void addFav(String rTitle,String sTitle, String dTitle){
         int flag=1;
+        float rate=(float) 0;
         System.out.println(sTitle);
         System.out.println(rTitle);
         System.out.println("Adding Favorite with new function");
-db.execSQL("UPDATE "+TABLE_NAME+" SET FavStatus = '"+ flag +"' WHERE StopTitle= '"+ sTitle +"' and RouteTitle  ='"+ rTitle +"'and DirTitle  ='"+ dTitle +"'");
+db.execSQL("UPDATE "+TABLE_NAME+" SET FavStatus = '"+ flag +"',rating = '"+ rate +"' WHERE StopTitle= '"+ sTitle +"' and RouteTitle  ='"+ rTitle +"'and DirTitle  ='"+ dTitle +"'");
                                                                               
         }// end of updateFavStatus
 
@@ -504,7 +506,7 @@ public List<String> getFavRoute() {
        // System.out.println("Inside the getFavorite function....\n");
 	
 List<String> list = new ArrayList<String>();
-    Cursor cursor =db.rawQuery("SELECT RouteTitle from "+TABLE_NAME+" Where FavStatus='"+1+"'", null);
+    Cursor cursor =db.rawQuery("SELECT RouteTitle from "+TABLE_NAME+" Where FavStatus='"+1+"' ORDER BY rating DESC", null);
 
 if (cursor.moveToFirst()) {
         
@@ -524,7 +526,7 @@ public List<String> getFavStop() {
     
     //    System.out.println("Inside the getFavorite function....\n");
 List<String> list = new ArrayList<String>();
-    Cursor cursor =db.rawQuery("SELECT StopTitle from "+TABLE_NAME+" Where FavStatus='"+1+"'", null);
+    Cursor cursor =db.rawQuery("SELECT StopTitle from "+TABLE_NAME+" Where FavStatus='"+1+"' ORDER BY rating DESC", null);
 
 if (cursor.moveToFirst()) {
         
@@ -546,7 +548,7 @@ public List<String> getFavDir() {
     
     //    System.out.println("Inside the getFavorite function....\n");
 List<String> list = new ArrayList<String>();
-    Cursor cursor =db.rawQuery("SELECT DirTitle from "+TABLE_NAME+" Where FavStatus='"+1+"'", null);
+    Cursor cursor =db.rawQuery("SELECT DirTitle from "+TABLE_NAME+" Where FavStatus='"+1+"' ORDER BY rating DESC", null);
 
 if (cursor.moveToFirst()) {
         
@@ -561,6 +563,24 @@ return list;
 } 
 
 
+public void addRate(String rTitle,String sTitle, String dTitle, Float rate){
+    
+    System.out.println(sTitle);
+    System.out.println(rTitle);
+    System.out.println("adding RATE ");
+    
+db.execSQL("UPDATE "+TABLE_NAME+" SET rating = '"+ rate +"' WHERE StopTitle= '"+ sTitle +"' and RouteTitle  ='"+ rTitle +"'and DirTitle  ='"+ dTitle +"'");
+                                                                          
+    }
+
+
+public void close() {
+    // NOTE: openHelper must now be a member of CallDataHelper;
+    // you currently have it as a local in your constructor
+    if (openHelper != null) {
+        openHelper.close();
+    }
+}
 
 
 
