@@ -40,7 +40,7 @@ public class DataHelper{
  */
 public DataHelper(Context context) {
               this.context = context;
-             // DataBaseHelper obj=new DataBaseHelper(this.context);
+              DataBaseHelper obj=new DataBaseHelper(this.context);
               
              OpenHelper openHelper = new OpenHelper(this.context);
               this.db = openHelper.getWritableDatabase();
@@ -540,9 +540,6 @@ if (cursor != null && !cursor.isClosed()) {
 return list;
 }
 
-
-
-
 public List<String> getFavDir() {
     // TODO Auto-generated method stub
     
@@ -561,6 +558,27 @@ if (cursor != null && !cursor.isClosed()) {
 }
 return list;
 } 
+
+
+public List<Float> getFavRate() {
+    // TODO Auto-generated method stub
+    
+    //    System.out.println("Inside the getFavorite function....\n");
+List<Float> list = new ArrayList<Float>();
+    Cursor cursor =db.rawQuery("SELECT rating from "+TABLE_NAME+" Where FavStatus='"+1+"' ORDER BY rating DESC", null);
+
+if (cursor.moveToFirst()) {
+        
+do {
+      list.add(cursor.getFloat(0));
+} while (cursor.moveToNext());
+}
+if (cursor != null && !cursor.isClosed()) {
+   cursor.close();
+}
+return list;
+} 
+
 
 
 public void addRate(String rTitle,String sTitle, String dTitle, Float rate){
