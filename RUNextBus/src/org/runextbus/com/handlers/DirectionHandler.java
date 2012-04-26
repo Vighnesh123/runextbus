@@ -40,7 +40,7 @@ public class DirectionHandler extends DefaultHandler {
 	private boolean flag; 
 	private boolean flag2;
 	int i=0;
-	
+	 
 	@Override
 	public void startElement(String namespaceURI, String localName,
 			String qName, Attributes atts) throws SAXException {
