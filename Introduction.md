@@ -1,0 +1,14 @@
+# AIM #
+
+The aim of this project is to learn about the android application development, while implementing the services provided by nextbus application as android application.
+
+
+---
+
+# Genesis of Project #
+
+The project was  started by a group of five students as a part of Software Engineering course work in September
+
+2010, is now being continued by me as an Independent Study under Prof.Marco Gruteser, at Rutgers University.
+
+This study aims at the understanding of android application development, phone debugging and deployment.
